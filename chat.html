@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chat - PinjamBarang</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo"><img src="assets/img/41ca085d-a13b-4bf3-89f6-49287a219f33.png" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover"> <span>PinjamBarang</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="pinjam.html">PinjamBarang</a>
+    <a href="browsing.html">Browsing</a>
+    <a href="tentang.html">Tentang Kami</a>
+    <a href="chat.html">Chat</a>
+    <a href="payment.html">Payment</a>
+    <a href="login.html" class="login-btn">Log In / Sign In</a>
+    <span class="cart-badge" id="cartCount">0</span>
+  </div>
+</nav>
+
+
+<div class="container" style="margin-top:18px;max-width:800px">
+  <h2>Chat</h2>
+  <div class="chat-window">
+    <div class="messages">
+      <div class="msg in">Halo! Ada yang bisa kami bantu?</div>
+      <div class="msg out">Saya ingin menanyakan ketersediaan kamera.</div>
+    </div>
+    <div class="chat-input">
+      <input id="chatInput" class="input" placeholder="Ketik pesan...">
+      <button class="btn btn-primary" onclick="sendChat()">Kirim</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  © PinjamBarang — Prototype • dibuat untuk demo
+</footer>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

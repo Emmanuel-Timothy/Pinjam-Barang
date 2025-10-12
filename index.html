@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PinjamBarang - Home</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo"><img src="assets/img/41ca085d-a13b-4bf3-89f6-49287a219f33.png" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover"> <span>PinjamBarang</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="pinjam.html">PinjamBarang</a>
+    <a href="browsing.html">Browsing</a>
+    <a href="tentang.html">Tentang Kami</a>
+    <a href="chat.html">Chat</a>
+    <a href="payment.html">Payment</a>
+    <a href="login.html" class="login-btn">Log In / Sign In</a>
+    <span class="cart-badge" id="cartCount">0</span>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="container">
+    <h1>Selamat Datang di PinjamBarang</h1>
+    <p>Pinjam, sewakan, dan dapatkan barang dengan mudah di sekitarmu.</p>
+    <a class="cta" href="pinjam.html">Mulai Pinjam</a>
+  </div>
+</section>
+<div class="container">
+  <h3>Rekomendasi Barang</h3>
+  <div class="card-grid">
+    <div class="card">
+      <img src="assets/img/f3734792-1c8f-41fa-ac75-5ff002d85bc0.png" alt="item">
+      <h4>Mesin Bor Tangan</h4>
+      <div class="small">Harga: Rp25.000 / hari</div>
+      <div style="margin-top:auto">
+        <a class="btn btn-primary" href="browsing.html" onclick="addToCart('Mesin Bor Tangan')">Add to Cart</a>
+      </div>
+    </div>
+    <div class="card">
+      <img src="assets/img/Prototype PinjamBarang.png" alt="item">
+      <h4>Kamera DSLR</h4>
+      <div class="small">Harga: Rp150.000 / hari</div>
+      <div style="margin-top:auto">
+        <a class="btn btn-outline" href="browsing.html" onclick="addToCart('Kamera DSLR')">Add to Cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  © PinjamBarang — Prototype • dibuat untuk demo
+</footer>
+<script src="assets/js/script.js"></script>
+</body>
+</html>
