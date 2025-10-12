@@ -1,14 +1,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 :root{
-  --primary:#2596be;
+  --primary:#ffffff;
   --accent:#ffd166;
   --bg:#f7f9fc;
   --muted:#6b7280;
 }
 *{box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;margin:0;background:var(--bg);color:#111}
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(90deg,var(--primary),#2c6975);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:linear-gradient(90deg,var(--primary),#ffffff);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08)}
 .logo{font-weight:700;display:flex;gap:10px;align-items:center}
 .nav-links{display:flex;gap:14px;align-items:center}
 .nav-links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600}
