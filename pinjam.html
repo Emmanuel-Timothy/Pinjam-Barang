@@ -3,59 +3,42 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PinjamBarang - List</title>
+<title>Keranjang - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <nav class="navbar">
-  <div class="logo"><img src="assets/img/LogoBW.png" alt="" style="width:140;height:55px;border-radius:6px;object-fit:cover"></div>
+  <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="pinjam.html">PinjamBarang</a>
     <a href="browsing.html">Browsing</a>
     <a href="tentang.html">Tentang Kami</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
-    <span class="cart-badge" id="cartCount">0</span>
+    <a href="pinjam.html" class="cart-link">
+      <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
+      <span class="cart-badge" id="cartCount">0</span>
+    </a>
   </div>
 </nav>
 
-
 <div class="container" style="margin-top:18px">
-  <h2>PinjamBarang</h2>
-  <p>Cari barang untuk disewa — klik 'Add to Cart' untuk menambahkan.</p>
-  <div class="card-grid">
-    <div class="card">
-      <img src="assets/img/PH.png" alt="item">
-      <h4>Proyektor Mini</h4>
-      <div class="small">Rp75.000 / hari</div>
-      <div style="margin-top:auto">
-        <button class="btn btn-outline" onclick="addToCart('Proyektor Mini')">Add to Cart</button>
-      </div>
-    </div>
-    <div class="card">
-      <img src="assets/img/PH.png" alt="item">
-      <h4>Speaker Aktif</h4>
-      <div class="small">Rp45.000 / hari</div>
-      <div style="margin-top:auto">
-        <button class="btn btn-outline" onclick="addToCart('Speaker Aktif')">Add to Cart</button>
-      </div>
-    </div>
-    <div class="card">
-      <img src="assets/img/PH.png" alt="item">
-      <h4>Tripod Kamera</h4>
-      <div class="small">Rp15.000 / hari</div>
-      <div style="margin-top:auto">
-        <button class="btn btn-outline" onclick="addToCart('Tripod Kamera')">Add to Cart</button>
-      </div>
-    </div>
+  <h2>Keranjang Pinjaman</h2>
+  <p>Barang-barang yang kamu tambahkan untuk disewa.</p>
+
+  <div id="cartItems" class="cart-list"></div>
+
+  <div class="cart-footer">
+    <h3 id="cartTotal">Total: Rp0</h3>
+    <button class="btn" onclick="goToPayment()">Lanjut ke Pembayaran</button>
   </div>
 </div>
 
 <footer class="footer">
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
+
 <script src="assets/js/script.js"></script>
 </body>
 </html>

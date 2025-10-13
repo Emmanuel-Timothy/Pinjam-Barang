@@ -3,59 +3,56 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Browsing - PinjamBarang</title>
+<title>PinjamBarang - Browsing</title>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <nav class="navbar">
-  <div class="logo"><img src="assets/img/LogoBW.png" alt="" style="width:140;height:55px;border-radius:6px;object-fit:cover"></div>
+  <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="pinjam.html">PinjamBarang</a>
-    <a href="browsing.html">Browsing</a>
     <a href="tentang.html">Tentang Kami</a>
+    <a href="browsing.html" class="active">Browsing</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
-    <span class="cart-badge" id="cartCount">0</span>
+    <a href="pinjam.html" class="cart-link">
+      <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
+      <span class="cart-badge" id="cartCount">0</span>
+    </a>
   </div>
 </nav>
 
-
 <div class="container" style="margin-top:18px">
-  <h2>Browsing</h2>
-  <div class="search-row">
-    <input class="input" placeholder="Cari barang..." id="q">
-    <input class="input" type="date" id="tgl">
-    <button class="btn btn-outline" onclick="alert('Pencarian demo — menampilkan hasil yang relevan')">Cari</button>
-  </div>
+  <h2>Daftar Barang</h2>
+  <p>Cari barang untuk disewa — klik 'Add to Cart' untuk menambahkan.</p>
+
   <div class="card-grid">
     <div class="card">
       <img src="assets/img/PH.png" alt="item">
-      <h4>Drone Mini</h4>
-      <div class="small">Rp200.000 / hari</div>
-      <div style="margin-top:auto">
-        <button class="btn btn-outline" onclick="addToCart('Drone Mini')">Add to Cart</button>
-      </div>
+      <h4>Proyektor Mini</h4>
+      <div class="small">Rp75.000 / hari</div>
+      <button class="btn btn-outline" onclick="addToCart('Proyektor Mini', 75000)">Add to Cart</button>
     </div>
     <div class="card">
       <img src="assets/img/PH.png" alt="item">
-      <h4>Mesin Jahit Portable</h4>
-      <div class="small">Rp60.000 / hari</div>
-      <div style="margin-top:auto">
-        <button class="btn btn-outline" onclick="addToCart('Mesin Jahit Portable')">Add to Cart</button>
-      </div>
+      <h4>Speaker Aktif</h4>
+      <div class="small">Rp45.000 / hari</div>
+      <button class="btn btn-outline" onclick="addToCart('Speaker Aktif', 45000)">Add to Cart</button>
     </div>
-  </div>
-  <div style="margin-top:18px">
-    <h3>Keranjang</h3>
-    <div id="cart"></div>
+    <div class="card">
+      <img src="assets/img/PH.png" alt="item">
+      <h4>Tripod Kamera</h4>
+      <div class="small">Rp15.000 / hari</div>
+      <button class="btn btn-outline" onclick="addToCart('Tripod Kamera', 15000)">Add to Cart</button>
+    </div>
   </div>
 </div>
 
 <footer class="footer">
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
+
 <script src="assets/js/script.js"></script>
 </body>
 </html>
