@@ -3,201 +3,97 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PinjamBarang - Browsing</title>
+<title>Browsing - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
-
 <style>
-  body {
-    background-color: #f9fafb;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+/* --- Minor layout tweaks --- */
+.category-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
 
-  /* === Navbar === */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
+.category-item {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  width: 120px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.category-item:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
+.category-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
 
-  .nav-links a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-  }
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
 
-  .nav-links a:hover {
-    color: #009688;
-  }
+.search-container input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-  .cart-link {
-    position: relative;
-  }
+.search-container button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #333;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.search-container button:hover {
+  background-color: #555;
+}
 
-  .cart-badge {
-    position: absolute;
-    top: -6px;
-    right: -10px;
-    background: #e53935;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-  }
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
 
-  /* === Search Bar === */
-  .search-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: white;
-    padding: 8px 16px;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-    max-width: 700px;
-    margin: 20px auto;
-  }
-
-  .search-bar select,
-  .search-bar input {
-    border: none;
-    outline: none;
-    font-size: 15px;
-  }
-
-  .search-bar input {
-    flex: 1;
-    background: transparent;
-  }
-
-  .search-bar button {
-    background-color: #009688;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
-  /* === Categories === */
-  .categories {
-    display: flex;
-    overflow-x: auto;
-    gap: 16px;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-  }
-
-  .cat-item {
-    text-align: center;
-    flex: 0 0 auto;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  .cat-item:hover {
-    transform: scale(1.05);
-  }
-
-  .cat-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    background: linear-gradient(to bottom right, #0ca8a3, #006e6a);
-    border-radius: 50%;
-    padding: 10px;
-  }
-
-  .cat-item p {
-    font-size: 13px;
-    margin-top: 6px;
-    color: #333;
-  }
-
-  /* === Product Grid === */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    padding: 0 20px 30px 20px;
-  }
-
-  .product-card {
-    background: white;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    transition: transform 0.2s;
-  }
-
-  .product-card:hover {
-    transform: translateY(-3px);
-  }
-
-  .product-card img {
-    width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-    height: 160px;
-  }
-
-  .product-card h4 {
-    margin: 10px 0 4px 0;
-    font-size: 16px;
-  }
-
-  .product-card .small {
-    font-size: 14px;
-    color: gray;
-  }
-
-  .btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
-  .btn-outline {
-    background: white;
-    border: 1px solid #009688;
-    color: #009688;
-    transition: background 0.2s, color 0.2s;
-  }
-
-  .btn-outline:hover {
-    background: #009688;
-    color: white;
-  }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    background: #fff;
-    color: #777;
-    border-top: 1px solid #eee;
-  }
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  background-color: white;
+  transition: 0.3s;
+}
+.product-card:hover {
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+.product-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
 </style>
 </head>
-
 <body>
 
-<!-- Navbar -->
 <nav class="navbar">
   <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="browsing.html">Browsing</a>
+    <a href="browsing.html" class="active">Browsing</a>
     <a href="tentang.html">Tentang Kami</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
@@ -208,87 +104,98 @@
   </div>
 </nav>
 
-<!-- Search Bar -->
-<div class="search-bar">
-  <select>
-    <option>Indonesia</option>
-    <option>Jakarta</option>
-    <option>Yogyakarta</option>
-  </select>
-  <input type="text" placeholder="Mau sewa apa hari ini?">
-  <button>🔍</button>
+<div class="container" style="margin-top:20px;max-width:900px">
+  <h2>Jelajahi Barang</h2>
+  <div class="category-list">
+    <div class="category-item" onclick="filterCategory('Elektronik')">
+      <img src="assets/img/PH.png" alt="Elektronik">
+      <p>Elektronik</p>
+    </div>
+    <div class="category-item" onclick="filterCategory('Peralatan')">
+      <img src="assets/img/PH.png" alt="Peralatan">
+      <p>Peralatan</p>
+    </div>
+    <div class="category-item" onclick="filterCategory('Olahraga')">
+      <img src="assets/img/PH.png" alt="Olahraga">
+      <p>Olahraga</p>
+    </div>
+    <div class="category-item" onclick="filterCategory('Furnitur')">
+      <img src="assets/img/PH.png" alt="Furnitur">
+      <p>Furnitur</p>
+    </div>
+    <div class="category-item" onclick="filterCategory('Lainnya')">
+      <img src="assets/img/PH.png" alt="Lainnya">
+      <p>Lainnya</p>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Cari barang...">
+    <button onclick="searchProduct()">Cari 🔍</button>
+    <button onclick="showAll()">Jelajahi Semua Barang</button>
+  </div>
+
+  <div class="product-list" id="productList"></div>
 </div>
 
-<!-- Categories -->
-<div class="categories">
-  <div class="cat-item" onclick="filterCategory('Alat Medis')">
-    <img src="assets/img/PH.png" alt="Alat Medis">
-    <p>Alat Medis</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Dapur')">
-    <img src="assets/img/PH.png" alt="Dapur">
-    <p>Dapur</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Elektronik')">
-    <img src="assets/img/PH.png" alt="Elektronik">
-    <p>Elektronik</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Hobi')">
-    <img src="assets/img/PH.png" alt="Hobi">
-    <p>Hobi</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Ibu & Bayi')">
-    <img src="assets/img/PH.png" alt="Ibu & Bayi">
-    <p>Ibu & Bayi</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Pertukangan')">
-    <img src="assets/img/PH.png" alt="Pertukangan">
-    <p>Pertukangan</p>
-  </div>
-  <div class="cat-item" onclick="filterCategory('Transportasi')">
-    <img src="assets/img/PH.png" alt="Transportasi">
-    <p>Transportasi</p>
-  </div>
-</div>
-
-<!-- Product List -->
-<div class="product-grid">
-  <div class="product-card">
-    <img src="assets/img/PH.png" alt="Vacuum Cleaner">
-    <h4>Vacuum Cleaner</h4>
-    <div class="small">Rp25.000 / hari</div>
-    <button class="btn btn-outline" onclick="addToCart('Vacuum Cleaner', 25000)">Add to Cart</button>
-  </div>
-  <div class="product-card">
-    <img src="assets/img/PH.png" alt="Carpet Cleaner">
-    <h4>Carpet Cleaner</h4>
-    <div class="small">Rp35.000 / hari</div>
-    <button class="btn btn-outline" onclick="addToCart('Carpet Cleaner', 35000)">Add to Cart</button>
-  </div>
-  <div class="product-card">
-    <img src="assets/img/PH.png" alt="Drill Cordless">
-    <h4>Drill (Cordless)</h4>
-    <div class="small">Rp15.000 / hari</div>
-    <button class="btn btn-outline" onclick="addToCart('Drill (Cordless)', 15000)">Add to Cart</button>
-  </div>
-  <div class="product-card">
-    <img src="assets/img/PH.png" alt="Projector">
-    <h4>Projector</h4>
-    <div class="small">Rp30.000 / hari</div>
-    <button class="btn btn-outline" onclick="addToCart('Projector', 30000)">Add to Cart</button>
-  </div>
-</div>
-
-<!-- Footer -->
 <footer class="footer">
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
 
-<script src="assets/js/script.js"></script>
 <script>
-  function filterCategory(cat) {
-    alert("Filter kategori: " + cat + " (demo)");
+// === Dummy Data ===
+const products = [
+  { name: "Kamera Canon", category: "Elektronik", img: "assets/img/PH.png" },
+  { name: "Laptop ASUS", category: "Elektronik", img: "assets/img/PH.png" },
+  { name: "Obeng Set", category: "Peralatan", img: "assets/img/PH.png" },
+  { name: "Tangga Lipat", category: "Peralatan", img: "assets/img/PH.png" },
+  { name: "Sepeda Gunung", category: "Olahraga", img: "assets/img/PH.png" },
+  { name: "Meja Belajar", category: "Furnitur", img: "assets/img/PH.png" },
+  { name: "Kursi Kantor", category: "Furnitur", img: "assets/img/PH.png" },
+  { name: "Tenda Camping", category: "Lainnya", img: "assets/img/PH.png" },
+];
+
+// === Display Function ===
+function displayProducts(list) {
+  const container = document.getElementById("productList");
+  container.innerHTML = "";
+  if (list.length === 0) {
+    container.innerHTML = "<p style='text-align:center'>Tidak ada barang ditemukan.</p>";
+    return;
   }
+  list.forEach(p => {
+    container.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p><small>${p.category}</small></p>
+        <button class="btn btn-primary" onclick="alert('Ditambahkan ke keranjang (demo)')">Pinjam</button>
+      </div>
+    `;
+  });
+}
+
+// === Filter by Category ===
+function filterCategory(cat) {
+  const filtered = products.filter(p => p.category === cat);
+  displayProducts(filtered);
+}
+
+// === Search Product ===
+function searchProduct() {
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+  displayProducts(filtered);
+}
+
+// === Show All ===
+function showAll() {
+  document.getElementById("searchInput").value = "";
+  displayProducts(products);
+}
+
+// === Init ===
+window.onload = () => showAll();
 </script>
 
 </body>
