@@ -57,7 +57,27 @@ function renderCart() {
 
   document.getElementById('cartTotal').textContent = "Total: Rp" + total.toLocaleString();
 }
-
+function sendChat(){
+  const input = document.getElementById("chatInput");
+  const box = document.querySelector(".messages");
+  if(!input || !box) return;
+  const txt = input.value.trim();
+  if(txt === "") return;
+  const el = document.createElement("div");
+  el.className = "msg out";
+  el.textContent = txt;
+  box.appendChild(el);
+  input.value = "";
+  box.scrollTop = box.scrollHeight;
+  // fake reply
+  setTimeout(()=>{
+    const r = document.createElement("div");
+    r.className = "msg in";
+    r.textContent = "Terima kasih! Kami akan membalas segera.";
+    box.appendChild(r);
+    box.scrollTop = box.scrollHeight;
+  }, 700);
+}
 function goToPayment() {
   if (getCart().length === 0) {
     alert("Keranjang masih kosong!");
