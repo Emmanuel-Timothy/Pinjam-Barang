@@ -5,39 +5,143 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Payment - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .cart-summary {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+  }
+  .cart-item:last-child {
+    border-bottom: none;
+  }
+  .cart-total {
+    text-align: right;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  .success-message {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background: #e8fff1;
+    color: #107a3a;
+    margin-top: 20px;
+    font-weight: bold;
+    animation: fadeIn 0.8s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
 </head>
 <body>
 
 <nav class="navbar">
-  <div class="logo"><img src="assets/img/LogoBW.png" alt="" style="width:140;height:55px;border-radius:6px;object-fit:cover"></div>
+  <div class="logo">
+    <img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover">
+  </div>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="pinjam.html">PinjamBarang</a>
     <a href="browsing.html">Browsing</a>
     <a href="tentang.html">Tentang Kami</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
-    <span class="cart-badge" id="cartCount">0</span>
+    <a href="pinjam.html" class="cart-link">
+      <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
+      <span class="cart-badge" id="cartCount">0</span>
+    </a>
   </div>
 </nav>
 
-
 <div class="container" style="margin-top:18px;max-width:640px">
-  <h2>Payment</h2>
+  <h2>Pembayaran</h2>
+  <p>Berikut barang yang akan kamu pinjam:</p>
+
+  <div id="cartSummary" class="cart-summary"></div>
+
   <p>Pilih metode pembayaran (demo):</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button class="btn btn-primary" onclick="alert('Bayar via E-Wallet — Demo OK ✅')">E-Wallet</button>
-    <button class="btn btn-outline" onclick="alert('Bayar via Transfer Bank — Demo OK ✅')">Bank Transfer</button>
-    <button class="btn btn-outline" onclick="alert('PayLater dipilih — Demo OK ✅')">PayLater</button>
+    <button class="btn btn-primary" onclick="pay('E-Wallet')">E-Wallet</button>
+    <button class="btn btn-outline" onclick="pay('Transfer Bank')">Bank Transfer</button>
+    <button class="btn btn-outline" onclick="pay('PayLater')">PayLater</button>
   </div>
-  <div style="margin-top:18px">
-    <a class="btn btn-primary" href="index.html">Selesai</a>
+
+  <div id="successMsg" class="success-message">
+    Pembayaran Berhasil ✅<br>
+    Mengosongkan keranjang...
+  </div>
+  
+  <div style="margin-top:18px;text-align:center">
+    <a class="btn btn-primary" id="doneBtn" href="index.html" style="display:none;">Kembali ke Beranda</a>
   </div>
 </div>
 
 <footer class="footer">
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
-<script src="assets/js/script.js"></script>
+
+<script>
+// 🧾 Load and show cart
+const cartCount = document.getElementById("cartCount");
+const cartSummary = document.getElementById("cartSummary");
+
+function updateCartDisplay() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cartCount.textContent = cart.length;
+
+  if (cart.length === 0) {
+    cartSummary.innerHTML = "<p>Keranjang kosong.</p>";
+    return;
+  }
+
+  let total = 0;
+  let html = "";
+
+  cart.forEach(item => {
+    const price = item.price || 0;
+    total += price;
+    html += `
+      <div class="cart-item">
+        <span>${item.name || "Barang Tanpa Nama"}</span>
+        <span>Rp ${price.toLocaleString()}</span>
+      </div>`;
+  });
+
+  html += `<div class="cart-total">Total: Rp ${total.toLocaleString()}</div>`;
+  cartSummary.innerHTML = html;
+}
+
+// 💳 Payment Simulation
+function pay(method) {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  if (cart.length === 0) {
+    alert("Keranjang masih kosong, tidak bisa melakukan pembayaran!");
+    return;
+  }
+
+  alert(`Pembayaran via ${method} berhasil — demo OK ✅`);
+  localStorage.removeItem("cart");
+  cartCount.textContent = 0;
+  cartSummary.innerHTML = "<p>Keranjang dikosongkan.</p>";
+  document.getElementById("successMsg").style.display = "block";
+  document.querySelectorAll(".btn").forEach(btn => btn.disabled = true);
+  setTimeout(() => {
+    document.getElementById("doneBtn").style.display = "inline-block";
+  }, 1500);
+}
+
+updateCartDisplay();
+</script>
+
 </body>
 </html>
