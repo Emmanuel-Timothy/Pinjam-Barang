@@ -6,8 +6,8 @@
   --accent:#ffd166;
   --bg:#f7f9fc;
   --muted:#6b7280;
-  --left:#68b2a0;
-  --right:#2c6975;
+  --left:#98b6ae;
+  --right:#557076;
 }
 *{box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;margin:0;background:var(--bg);color:#111}
@@ -21,7 +21,7 @@ body{font-family:'Poppins',sans-serif;margin:0;background:var(--bg);color:#111}
 .hero{padding:60px 28px;text-align:center}
 .hero h1{font-size:34px;margin:0 0 10px}
 .hero p{color:var(--muted);margin-bottom:18px}
-.cta{display:inline-block;background:linear-gradient(135deg,var(--left),var(--right));color:#ffffff;padding:10px 20px;border-radius:10px;text-decoration:none}
+.cta{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#ffffff;padding:10px 20px;border-radius:10px;text-decoration:none}
 .container{max-width:1100px;margin:28px auto;padding:0 18px}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
 .card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.06);display:flex;flex-direction:column;gap:10px}
@@ -36,8 +36,8 @@ body{font-family:'Poppins',sans-serif;margin:0;background:var(--bg);color:#111}
 .chat-window{height:400px;background:#fff;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
 .messages{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
 .msg{max-width:70%;padding:8px 10px;border-radius:10px}
-.in{align-self:flex-start;background:#f1f5f9}
-.out{align-self:flex-end;background:var(--primary);color:#fff}
+.in{align-self:flex-start;background:linear-gradient(135deg,var(--secondary),var(--primary))}
+.out{align-self:flex-end;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
 .chat-input{display:flex;gap:8px}
 .small{font-size:13px;color:var(--muted)}
 @media(max-width:720px){
