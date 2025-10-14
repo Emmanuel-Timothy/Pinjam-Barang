@@ -68,6 +68,27 @@
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
 
+<!-- Rent Modal -->
+<div id="rentModal" style="display:none; 
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000;">
+  <div style="background:white;padding:20px;border-radius:10px;max-width:350px;width:90%;text-align:center;">
+    <h3>Sewa Barang</h3>
+    <p id="rentItemName"></p>
+    <label>Jumlah Barang:</label><br>
+    <input type="number" id="rentQty" min="1" value="1" style="width:80%;margin:5px 0;padding:5px;"><br>
+    
+    <label>Tanggal Mulai:</label><br>
+    <input type="date" id="rentStart" style="width:80%;margin:5px 0;padding:5px;"><br>
+    
+    <label>Tanggal Selesai:</label><br>
+    <input type="date" id="rentEnd" style="width:80%;margin:5px 0;padding:5px;"><br>
+
+    <button onclick="confirmRent()" style="background:#28a745;color:white;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Tambahkan ke Keranjang</button>
+    <button onclick="closeModal()" style="background:#ccc;color:black;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Batal</button>
+  </div>
+</div>
+
 <script>
 // Product data (same as browsing.html)
 const products = [
@@ -84,6 +105,8 @@ const products = [
 // === Parse Query ===
 const params = new URLSearchParams(window.location.search);
 const itemName = params.get("item");
+
+let selectedItem = null;
 
 // === Display Item ===
 function showDetail() {
@@ -106,15 +129,52 @@ function showDetail() {
   `;
 }
 
-// === Cart Logic ===
+// === Cart Logic with Modal ===
 function addToCart(name) {
-  const item = products.find(p => p.name === name);
-  if (!item) return;
+  selectedItem = products.find(p => p.name === name);
+  if (!selectedItem) return;
+
+  document.getElementById("rentItemName").textContent = selectedItem.name;
+  document.getElementById("rentStart").value = "";
+  document.getElementById("rentEnd").value = "";
+  document.getElementById("rentQty").value = 1;
+
+  document.getElementById("rentModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("rentModal").style.display = "none";
+}
+
+function confirmRent() {
+  const qty = parseInt(document.getElementById("rentQty").value);
+  const startDate = new Date(document.getElementById("rentStart").value);
+  const endDate = new Date(document.getElementById("rentEnd").value);
+
+  if (isNaN(qty) || qty <= 0) return alert("Jumlah harus valid!");
+  if (!startDate || !endDate || startDate >= endDate) return alert("Tanggal tidak valid!");
+
+  const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+  const total = selectedItem.price * qty * days;
+
+  // Cart item structure
+  const cartItem = {
+    name: selectedItem.name,
+    price: selectedItem.price,
+    qty: qty,
+    days: days,
+    total: total,
+    start: startDate.toISOString().split('T')[0],
+    end: endDate.toISOString().split('T')[0]
+  };
+
   let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  cart.push(item);
+  cart.push(cartItem);
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
-  alert(`${item.name} ditambahkan ke keranjang ✅`);
+  closeModal();
+
+  alert(`${selectedItem.name} (${qty}x, ${days} hari) ditambahkan ke keranjang ✅`);
 }
 
 function updateCartCount() {
