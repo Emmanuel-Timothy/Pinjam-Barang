@@ -7,134 +7,161 @@
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
 body {
-  font-family: "Poppins", sans-serif;
-  background: #f5f7f6;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f5f7fa;
   margin: 0;
-  color: #333;
-}
-
-/* === 🆕 Popup Styling === */
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 10px;
-  padding: 25px 35px;
-  text-align: center;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-
-.popup.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.popup h3 {
-  color: #007a33;
-  margin-bottom: 10px;
-}
-
-.popup p {
-  margin: 0;
-  color: #333;
+  padding: 0;
 }
 
 .container {
-  max-width: 720px;
+  max-width: 800px;
   margin: 40px auto;
-  background: white;
+  background: #fff;
   border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  padding: 25px 30px;
+  transition: all 0.3s ease;
 }
 
 h2 {
   text-align: center;
-  color: #007a33;
-  margin-bottom: 25px;
+  color: #333;
+  margin-bottom: 15px;
 }
 
-.payment-options {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.cart-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 0;
 }
 
-.option {
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.option:hover {
-  border-color: #007a33;
-  background: #f4fff7;
-}
-
-.option.active {
-  border-color: #007a33;
-  background: #eaffea;
-}
-
-.option img {
-  width: 45px;
-  height: 45px;
-  object-fit: contain;
-}
-
-.btn {
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.btn-primary {
-  background: #007a33;
-  color: white;
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin-top: 25px;
-}
-
-.btn-primary:hover {
-  background: #005f27;
-}
-
-.summary {
-  margin-top: 25px;
-  border-top: 1px solid #ddd;
-  padding-top: 15px;
-  font-size: 18px;
-  text-align: right;
+.cart-item h4 {
+  margin: 0;
   color: #222;
 }
 
-.back-link {
-  display: inline-block;
-  margin-top: 10px;
-  color: #007a33;
-  text-decoration: none;
+.cart-item p {
+  margin: 4px 0;
+  color: #555;
 }
 
-.back-link:hover {
-  text-decoration: underline;
+.cart-item button {
+  background-color: crimson;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cart-item button:hover {
+  background-color: darkred;
+}
+
+.total-section {
+  text-align: right;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.payment-options {
+  margin-top: 25px;
+}
+
+.payment-options h3 {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.payment-options label {
+  display: block;
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.payment-options input[type="radio"] {
+  margin-right: 8px;
+  accent-color: #2a8;
+}
+
+button.pay-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background 0.2s ease;
+}
+
+button.pay-btn:hover {
+  background-color: #1e7e34;
+}
+
+/* Popup Modal */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s;
+}
+
+.popup.active {
+  display: flex;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  animation: popIn 0.3s ease;
+}
+
+.popup-content h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.popup-content p {
+  color: #555;
+}
+
+.popup-content button {
+  margin-top: 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background: #218838;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes popIn {
+  from {transform: scale(0.8); opacity: 0;}
+  to {transform: scale(1); opacity: 1;}
 }
 </style>
 </head>
+
 <body>
 
 <nav class="navbar">
@@ -145,43 +172,38 @@ h2 {
     <a href="tentang.html">Tentang Kami</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
-    <a href="pinjam.html" class="cart-link">
+    <a href="pinjam.html" class="cart-link active">
       <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
       <span class="cart-badge" id="cartCount">0</span>
     </a>
   </div>
 </nav>
 
-<!-- 🆕 Popup element -->
-<div class="popup" id="popupSuccess">
-  <h3>Pembayaran Berhasil ✅</h3>
-  <p>Terima kasih telah menggunakan PinjamBarang!</p>
-</div>
-
 <div class="container">
-  <h2>Pilih Metode Pembayaran</h2>
+  <h2>Keranjang & Pembayaran</h2>
+  <div id="cartContainer"></div>
+
+  <div class="total-section">
+    Total Pembayaran: <span id="totalPrice">Rp 0</span>
+  </div>
 
   <div class="payment-options">
-    <div class="option" onclick="selectOption(this, 'transfer')">
-      <span>🏦 Transfer Bank</span>
-      <img src="assets/img/PH.png" alt="Bank">
-    </div>
-    <div class="option" onclick="selectOption(this, 'ewallet')">
-      <span>📱 E-Wallet (GoPay, OVO, DANA)</span>
-      <img src="assets/img/PH.png" alt="E-Wallet">
-    </div>
-    <div class="option" onclick="selectOption(this, 'cod')">
-      <span>🚚 Bayar di Tempat (COD)</span>
-      <img src="assets/img/PH.png" alt="COD">
-    </div>
+    <h3>Metode Pembayaran</h3>
+    <label><input type="radio" name="payment" value="transfer"> Transfer Bank (BCA / Mandiri / BRI)</label>
+    <label><input type="radio" name="payment" value="ewallet"> E-Wallet (OVO / GoPay / Dana)</label>
+    <label><input type="radio" name="payment" value="cod"> Cash On Delivery (COD)</label>
   </div>
 
-  <div class="summary" id="totalSummary">
-    Total: Rp 0
-  </div>
+  <button class="pay-btn" onclick="lanjutPembayaran()">💳 Bayar Sekarang</button>
+</div>
 
-  <button class="btn btn-primary" onclick="confirmPayment()">Konfirmasi Pembayaran</button>
-  <a href="pinjam.html" class="back-link">← Kembali ke Keranjang</a>
+<!-- Popup Confirmation -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>🎉 Pembayaran Berhasil!</h3>
+    <p>Terima kasih telah menggunakan <strong>PinjamBarang</strong>.<br>Transaksi Anda telah diproses.</p>
+    <button onclick="tutupPopup()">Selesai</button>
+  </div>
 </div>
 
 <footer class="footer">
@@ -189,53 +211,77 @@ h2 {
 </footer>
 
 <script>
-// Update cart count display
-function updateCartCount() {
+// === Load Cart ===
+function loadCart() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  document.getElementById("cartCount").textContent = cart.length;
-}
-
-// Display total cost
-function displayTotal() {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  let total = 0;
-  cart.forEach(item => { total += item.price; });
-  document.getElementById("totalSummary").textContent = "Total: Rp " + total.toLocaleString();
-}
-
-let selectedMethod = null;
-function selectOption(el, method) {
-  document.querySelectorAll(".option").forEach(opt => opt.classList.remove("active"));
-  el.classList.add("active");
-  selectedMethod = method;
-}
-
-function confirmPayment() {
-  if (!selectedMethod) {
-    alert("Pilih metode pembayaran terlebih dahulu!");
+  const cartContainer = document.getElementById("cartContainer");
+  const totalPriceElem = document.getElementById("totalPrice");
+  const cartCountElem = document.getElementById("cartCount");
+  
+  cartContainer.innerHTML = "";
+  let grandTotal = 0;
+  
+  if (cart.length === 0) {
+    cartContainer.innerHTML = "<p style='text-align:center;'>Keranjang kosong.</p>";
+    totalPriceElem.textContent = "Rp 0";
+    cartCountElem.textContent = 0;
     return;
   }
-
-  // === 🆕 Show popup fade ===
-  const popup = document.getElementById("popupSuccess");
-  popup.classList.add("active");
-
-  // Simulate payment success
-  localStorage.removeItem("cart");
-
-  // Wait 2.5s, fade out, then redirect
-  setTimeout(() => {
-    popup.classList.remove("active");
-    setTimeout(() => {
-      window.location.href = "pinjam.html?clearCart=true";
-    }, 500);
-  }, 2500);
+  
+  cart.forEach((item, index) => {
+    const qty = item.qty || 1;
+    const days = item.days || 1;
+    const subtotal = item.total || (item.price * qty * days);
+    grandTotal += subtotal;
+    
+    cartContainer.innerHTML += `
+      <div class="cart-item">
+        <h4>${item.name}</h4>
+        <p>Jumlah: ${qty} • Durasi: ${days} hari</p>
+        <p>Harga per hari: Rp ${item.price.toLocaleString()}</p>
+        <p><strong>Subtotal: Rp ${subtotal.toLocaleString()}</strong></p>
+        <button onclick="removeItem(${index})">Hapus</button>
+      </div>
+    `;
+  });
+  
+  totalPriceElem.textContent = "Rp " + grandTotal.toLocaleString();
+  cartCountElem.textContent = cart.length;
 }
 
-window.onload = () => {
-  updateCartCount();
-  displayTotal();
-};
+// === Remove Item ===
+function removeItem(index) {
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+// === Lanjut Pembayaran ===
+function lanjutPembayaran() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const selected = document.querySelector('input[name="payment"]:checked');
+  
+  if (cart.length === 0) return alert("Keranjang masih kosong.");
+  if (!selected) return alert("Silakan pilih metode pembayaran terlebih dahulu.");
+
+  const total = cart.reduce((sum, item) => sum + (item.total || (item.price * (item.qty || 1) * (item.days || 1))), 0);
+  document.getElementById("popup").classList.add("active");
+  localStorage.removeItem("cart");
+  document.getElementById("cartContainer").innerHTML = "<p style='text-align:center;'>Keranjang kosong.</p>";
+  document.getElementById("totalPrice").textContent = "Rp 0";
+  document.getElementById("cartCount").textContent = 0;
+}
+
+// === Tutup Popup ===
+function tutupPopup() {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("active");
+  setTimeout(() => { window.location.href = "index.html"; }, 400);
+}
+
+// === Init ===
+window.onload = loadCart;
 </script>
 
 </body>

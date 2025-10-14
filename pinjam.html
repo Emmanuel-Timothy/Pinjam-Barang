@@ -6,64 +6,20 @@
 <title>Keranjang - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-.cart-container {
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-.cart-item:last-child { border-bottom: none; }
-.cart-item img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-.item-info {
-  flex: 1;
-  margin-left: 10px;
-}
-.item-name { font-weight: bold; }
-.item-price { color: #007a33; }
-.cart-total {
-  margin-top: 20px;
-  font-size: 18px;
-  text-align: right;
-  font-weight: bold;
-}
-.btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-}
-.btn-danger {
-  background: #c0392b;
-  color: white;
-}
-.btn-danger:hover { background: #922b21; }
-.btn-primary {
-  background: #007a33;
-  color: white;
-}
-.btn-primary:hover { background: #005c26; }
-.empty {
-  text-align: center;
-  color: #777;
-  padding: 40px 0;
-}
+body { font-family: Arial, sans-serif; background-color: #fafafa; margin: 0; padding: 0; }
+.container { max-width: 800px; margin: 30px auto; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px; }
+h2 { text-align: center; color: #333; }
+.cart-item { border-bottom: 1px solid #ddd; padding: 10px 0; }
+.cart-item h4 { margin: 0; color: #222; }
+.cart-item p { margin: 4px 0; color: #555; }
+.cart-item button { background-color: crimson; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.cart-item button:hover { background-color: darkred; }
+.total-section { text-align: right; margin-top: 20px; font-size: 18px; font-weight: bold; }
+button.pay-btn { display: block; width: 100%; padding: 10px; background-color: green; color: white; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+button.pay-btn:hover { background-color: darkgreen; }
 </style>
 </head>
+
 <body>
 
 <nav class="navbar">
@@ -74,22 +30,20 @@
     <a href="tentang.html">Tentang Kami</a>
     <a href="chat.html">Chat</a>
     <a href="login.html" class="login-btn">Log In / Sign In</a>
-    <a href="pinjam.html" class="cart-link">
+    <a href="pinjam.html" class="cart-link active">
       <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
       <span class="cart-badge" id="cartCount">0</span>
     </a>
   </div>
 </nav>
 
-<div class="cart-container">
-  <h2>Keranjang Kamu 🛒</h2>
-  <div id="cartItems"></div>
-  <div class="cart-total" id="cartTotal"></div>
-
-  <div style="margin-top:20px;text-align:right">
-    <a href="browsing.html" class="btn btn-outline">← Lanjut Belanja</a>
-    <button class="btn btn-primary" onclick="goToPayment()">Lanjut ke Pembayaran</button>
+<div class="container">
+  <h2>Keranjang</h2>
+  <div id="cartContainer"></div>
+  <div class="total-section">
+    Total: <span id="totalPrice">Rp 0</span>
   </div>
+  <button class="pay-btn" onclick="goToPayment()">💳 Lanjut ke Pembayaran</button>
 </div>
 
 <footer class="footer">
@@ -97,72 +51,68 @@
 </footer>
 
 <script>
-// === Update Cart Count ===
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  document.getElementById('cartCount').textContent = cart.length;
-}
-
-// === Display Cart ===
-function renderCart() {
-  const container = document.getElementById('cartItems');
-  const totalEl = document.getElementById('cartTotal');
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
+function loadCart() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const cartContainer = document.getElementById("cartContainer");
+  const totalPriceElem = document.getElementById("totalPrice");
+  const cartCountElem = document.getElementById("cartCount");
+  
+  cartContainer.innerHTML = "";
+  let grandTotal = 0;
+  
   if (cart.length === 0) {
-    container.innerHTML = '<div class="empty">Keranjang kamu kosong 😴</div>';
-    totalEl.textContent = '';
+    cartContainer.innerHTML = "<p style='text-align:center;'>Keranjang kosong.</p>";
+    totalPriceElem.textContent = "Rp 0";
+    cartCountElem.textContent = 0;
     return;
   }
-
-  let html = '';
-  let total = 0;
-
+  
   cart.forEach((item, index) => {
-    const price = item.price || 0;
-    total += price;
-    html += `
+    const qty = item.qty || 1;
+    const days = item.days || 1;
+    const subtotal = item.price * qty * days;
+    grandTotal += subtotal;
+    
+    cartContainer.innerHTML += `
       <div class="cart-item">
-        <img src="${item.img || 'assets/img/PH.png'}" alt="${item.name}">
-        <div class="item-info">
-          <div class="item-name">${item.name}</div>
-          <div class="item-price">Rp ${price.toLocaleString()}</div>
-        </div>
-        <button class="btn btn-danger" onclick="removeItem(${index})">Hapus</button>
+        <h4>${item.name}</h4>
+        <p>Kategori: ${item.category}</p>
+        <p>Jumlah: ${qty} unit • Durasi: ${days} hari</p>
+        <p>Harga per hari: Rp ${item.price.toLocaleString()}</p>
+        <p><strong>Subtotal: Rp ${subtotal.toLocaleString()}</strong></p>
+        <button onclick="removeItem(${index})">Hapus</button>
       </div>
     `;
   });
-
-  container.innerHTML = html;
-  totalEl.textContent = `Total: Rp ${total.toLocaleString()}`;
+  
+  totalPriceElem.textContent = "Rp " + grandTotal.toLocaleString();
+  cartCountElem.textContent = cart.length;
 }
 
-// === Remove item ===
 function removeItem(index) {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
   cart.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
-  updateCartCount();
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
 }
 
-// === Payment Redirect ===
+// Redirect to payment.html
 function goToPayment() {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  console.log("Cart contents:", cart); // Debug log
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   if (cart.length === 0) {
-    alert("Keranjang kamu kosong 😅");
+    alert("Keranjang kosong, tidak dapat melanjutkan pembayaran.");
     return;
   }
+
+  // Calculate total and save to localStorage
+  let total = 0;
+  cart.forEach(item => total += item.price * (item.qty || 1) * (item.days || 1));
+  localStorage.setItem("totalPayment", total);
   window.location.href = "payment.html";
 }
 
-
-// === Init ===
-window.onload = function() {
-  updateCartCount();
-  renderCart();
-};
+window.onload = loadCart;
 </script>
+
 </body>
 </html>
