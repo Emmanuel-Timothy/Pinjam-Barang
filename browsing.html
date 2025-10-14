@@ -47,9 +47,9 @@
   width: 180px;
   min-width: 180px;
   max-width: 180px;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
+  height: 400px;
+  min-height: 400px;
+  max-height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,7 +160,7 @@ function displayProducts(list) {
           <h4>${p.name}</h4>
           <p><small>${p.category}</small></p>
           <p class="price">Rp ${p.price.toLocaleString()}</p>
-          <p style="margin:4px 0;font-weight:600;color:${outOfStock ? '#c00' : '#009933'}">
+          <p style="margin:4px 0;font-weight:600;font-size:15px;color:${outOfStock ? '#c00' : '#009933'}">
             ${outOfStock ? 'Stok Habis' : `Tersedia bulan ini: ${availableToday}`}
           </p>
           <button class="btn btn-primary" onclick="addToCart('${p.name}')" ${outOfStock ? 'disabled style=\"background:#aaa;cursor:not-allowed\"' : ''}>+ Keranjang</button>
