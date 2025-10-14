@@ -121,18 +121,30 @@ function displayProducts(list) {
     container.innerHTML = "<p style='text-align:center'>Tidak ada barang ditemukan.</p>";
     return;
   }
-  list.forEach(p => {
-    container.innerHTML += `
-      <div class="product-card">
-        <img src="${p.img}" alt="${p.name}" onclick="goToDetail('${p.name}')">
-        <h4>${p.name}</h4>
-        <p><small>${p.category}</small></p>
-        <p class="price">Rp ${p.price.toLocaleString()}</p>
-        <button class="btn btn-primary" onclick="addToCart('${p.name}')">+ Keranjang</button>
-      </div>
-    `;
-  });
-}
+    const inv = getInventory();
+    const bookings = getBookings();
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    list.forEach(p => {
+      const stock = inv[p.name] !== undefined ? inv[p.name] : defaultStock;
+      // Calculate booked for today
+      const bookedToday = (bookings[p.name] && bookings[p.name][todayStr]) || 0;
+      const availableToday = Math.max(0, stock - bookedToday);
+      const outOfStock = availableToday <= 0;
+      container.innerHTML += `
+        <div class="product-card">
+          <img src="${p.img}" alt="${p.name}" onclick="goToDetail('${p.name}')">
+          <h4>${p.name}</h4>
+          <p><small>${p.category}</small></p>
+          <p class="price">Rp ${p.price.toLocaleString()}</p>
+          <p style="margin:4px 0;font-weight:600;color:${outOfStock ? '#c00' : '#009933'}">
+            ${outOfStock ? 'Stok Habis' : `Tersedia bulan ini: ${availableToday}`}
+          </p>
+          <button class="btn btn-primary" onclick="addToCart('${p.name}')" ${outOfStock ? 'disabled style=\"background:#aaa;cursor:not-allowed\"' : ''}>+ Keranjang</button>
+        </div>
+      `;
+    });
+  };
 
 // === Category & Search ===
 function filterCategory(cat) {
@@ -151,16 +163,52 @@ function showAll() {
   displayProducts(products);
 }
 
-// === Cart Logic ===
+
+// === Inventory Logic ===
+// Simulate inventory: each product has a stock (default 5)
+const defaultStock = 5;
+function getInventory() {
+  return JSON.parse(localStorage.getItem("inventory") || "{}")
+}
+function setInventory(inv) {
+  localStorage.setItem("inventory", JSON.stringify(inv));
+}
+// Always reset inventory to demo values on page load (for demo/testing)
+const inv = {
+  "Kamera Canon": 2,
+  "Laptop ASUS": 0, // out of stock
+  "Obeng Set": 8,
+  "Tangga Lipat": 4,
+  "Sepeda Gunung": 1,
+  "Meja Belajar": 6,
+  "Kursi Kantor": 3,
+  "Tenda Camping": 5
+};
+setInventory(inv);
+
+// Track bookings per product per date
+function getBookings() {
+  return JSON.parse(localStorage.getItem("bookings") || "{}")
+}
+function setBookings(b) {
+  localStorage.setItem("bookings", JSON.stringify(b));
+}
+
+let selectedItem = null;
+let availableQty = defaultStock;
+
 function addToCart(name) {
   selectedItem = products.find(p => p.name === name);
   if (!selectedItem) return;
-  
   document.getElementById("rentItemName").textContent = selectedItem.name;
   document.getElementById("rentStart").value = "";
   document.getElementById("rentEnd").value = "";
   document.getElementById("rentQty").value = 1;
-  
+  document.getElementById("rentQty").disabled = false;
+  document.getElementById("rentStart").disabled = false;
+  document.getElementById("rentEnd").disabled = false;
+  document.getElementById("rentModalAddBtn").disabled = false;
+  document.getElementById("rentAvailable").textContent = "";
   document.getElementById("rentModal").style.display = "flex";
 }
 
@@ -168,19 +216,69 @@ function closeModal() {
   document.getElementById("rentModal").style.display = "none";
 }
 
-// Confirm adding with rental info
+// Helper: get all dates between two dates (inclusive)
+function getDateRange(start, end) {
+  const arr = [];
+  let dt = new Date(start);
+  while (dt <= end) {
+    arr.push(dt.toISOString().split('T')[0]);
+    dt.setDate(dt.getDate() + 1);
+  }
+  return arr;
+}
+
+// Check available qty for selected item and date range
+function checkAvailableQty() {
+  const start = document.getElementById("rentStart").value;
+  const end = document.getElementById("rentEnd").value;
+  if (!selectedItem || !start || !end) {
+    document.getElementById("rentAvailable").textContent = "";
+    document.getElementById("rentModalAddBtn").disabled = true;
+    return;
+  }
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const maxDate = new Date(today);
+  maxDate.setMonth(maxDate.getMonth() + 1);
+  if (startDate < today || endDate > maxDate || startDate >= endDate) {
+    document.getElementById("rentAvailable").textContent = "Tanggal harus dalam 1 bulan ke depan dan valid.";
+    document.getElementById("rentModalAddBtn").disabled = true;
+    return;
+  }
+  const inv = getInventory();
+  const bookings = getBookings();
+  const stock = inv[selectedItem.name] || defaultStock;
+  const range = getDateRange(startDate, endDate);
+  let minAvail = stock;
+  range.forEach(date => {
+    const b = (bookings[selectedItem.name] && bookings[selectedItem.name][date]) || 0;
+    if (stock - b < minAvail) minAvail = stock - b;
+  });
+  availableQty = minAvail;
+  document.getElementById("rentAvailable").textContent = `Tersedia: ${minAvail} unit pada tanggal dipilih`;
+  document.getElementById("rentModalAddBtn").disabled = minAvail <= 0;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("rentStart").addEventListener("change", checkAvailableQty);
+  document.getElementById("rentEnd").addEventListener("change", checkAvailableQty);
+});
+
 function confirmRent() {
   const qty = parseInt(document.getElementById("rentQty").value);
   const startDate = new Date(document.getElementById("rentStart").value);
   const endDate = new Date(document.getElementById("rentEnd").value);
-  
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const maxDate = new Date(today);
+  maxDate.setMonth(maxDate.getMonth() + 1);
   if (isNaN(qty) || qty <= 0) return alert("Jumlah harus valid!");
-  if (!startDate || !endDate || startDate >= endDate) return alert("Tanggal tidak valid!");
-  
+  if (!startDate || !endDate || startDate >= endDate || startDate < today || endDate > maxDate) return alert("Tanggal harus dalam 1 bulan ke depan dan valid!");
+  if (qty > availableQty) return alert("Stok tidak cukup untuk tanggal tersebut!");
   const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
   const total = selectedItem.price * qty * days;
-
-  // Cart item structure
   const cartItem = {
     name: selectedItem.name,
     price: selectedItem.price,
@@ -190,13 +288,19 @@ function confirmRent() {
     start: startDate.toISOString().split('T')[0],
     end: endDate.toISOString().split('T')[0]
   };
-
+  // Update bookings
+  const bookings = getBookings();
+  const range = getDateRange(startDate, endDate);
+  if (!bookings[selectedItem.name]) bookings[selectedItem.name] = {};
+  range.forEach(date => {
+    bookings[selectedItem.name][date] = (bookings[selectedItem.name][date] || 0) + qty;
+  });
+  setBookings(bookings);
   let cart = JSON.parse(localStorage.getItem("cart") || "[]");
   cart.push(cartItem);
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
   closeModal();
-  
   alert(`${selectedItem.name} (${qty}x, ${days} hari) ditambahkan ke keranjang ✅`);
 }
 function updateCartCount() {
@@ -223,18 +327,32 @@ window.onload = () => {
     <h3>Sewa Barang</h3>
     <p id="rentItemName"></p>
     <label>Jumlah Barang:</label><br>
-    <input type="number" id="rentQty" min="1" value="1" style="width:80%;margin:5px 0;padding:5px;"><br>
-    
-    <label>Tanggal Mulai:</label><br>
-    <input type="date" id="rentStart" style="width:80%;margin:5px 0;padding:5px;"><br>
-    
-    <label>Tanggal Selesai:</label><br>
-    <input type="date" id="rentEnd" style="width:80%;margin:5px 0;padding:5px;"><br>
-
-    <button onclick="confirmRent()" style="background:#28a745;color:white;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Tambahkan ke Keranjang</button>
-    <button onclick="closeModal()" style="background:#ccc;color:black;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Batal</button>
+  <input type="number" id="rentQty" min="1" value="1" style="width:80%;margin:5px 0;padding:5px;"><br>
+  <span id="rentAvailable" style="display:block;margin-bottom:5px;color:#009933;font-weight:600"></span>
+  <label>Tanggal Mulai:</label><br>
+  <input type="date" id="rentStart" style="width:80%;margin:5px 0;padding:5px;"><br>
+  <label>Tanggal Selesai:</label><br>
+  <input type="date" id="rentEnd" style="width:80%;margin:5px 0;padding:5px;"><br>
+  <button id="rentModalAddBtn" onclick="confirmRent()" style="background:#28a745;color:white;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Tambahkan ke Keranjang</button>
+  <button onclick="closeModal()" style="background:#ccc;color:black;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Batal</button>
   </div>
 </div>
+
+<script>
+// Set min/max for rentStart and rentEnd to only allow 1 month from today
+function setDateLimits() {
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
+  const maxDateObj = new Date(today);
+  maxDateObj.setMonth(maxDateObj.getMonth() + 1);
+  const maxDate = maxDateObj.toISOString().split('T')[0];
+  document.getElementById('rentStart').setAttribute('min', minDate);
+  document.getElementById('rentStart').setAttribute('max', maxDate);
+  document.getElementById('rentEnd').setAttribute('min', minDate);
+  document.getElementById('rentEnd').setAttribute('max', maxDate);
+}
+document.addEventListener('DOMContentLoaded', setDateLimits);
+</script>
 
 </body>
 </html>
