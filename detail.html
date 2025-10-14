@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Detail Barang - PinjamBarang</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.detail-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.detail-container img {
+  width: 300px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.detail-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.detail-info h2 { margin: 0; }
+.detail-info p { margin: 6px 0; }
+.price { font-size: 20px; font-weight: bold; color: #007a33; }
+.btn { margin-top: 10px; padding: 10px 14px; border: none; border-radius: 6px; cursor: pointer; }
+.btn-primary { background: #007a33; color: white; }
+.btn-primary:hover { background: #005f27; }
+.btn-outline { background: white; border: 1px solid #007a33; color: #007a33; }
+.btn-outline:hover { background: #007a33; color: white; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="browsing.html">Browsing</a>
+    <a href="tentang.html">Tentang Kami</a>
+    <a href="chat.html">Chat</a>
+    <a href="login.html" class="login-btn">Log In / Sign In</a>
+    <a href="pinjam.html" class="cart-link">
+      <img src="assets/img/cart.png" alt="Cart" style="width:25px;vertical-align:middle;">
+      <span class="cart-badge" id="cartCount">0</span>
+    </a>
+  </div>
+</nav>
+
+<div class="detail-container" id="detailContainer">
+  <p>Memuat data barang...</p>
+</div>
+
+<div style="text-align:center;margin:20px">
+  <a href="browsing.html" class="btn btn-outline">← Kembali ke Browsing</a>
+</div>
+
+<footer class="footer">
+  © PinjamBarang — Prototype • dibuat untuk demo
+</footer>
+
+<script>
+// Product data (same as browsing.html)
+const products = [
+  { name: "Kamera Canon", category: "Elektronik", price: 50000, img: "assets/img/PH.png", desc: "Kamera DSLR Canon dengan kualitas foto profesional." },
+  { name: "Laptop ASUS", category: "Elektronik", price: 100000, img: "assets/img/PH.png", desc: "Laptop ASUS berkinerja tinggi, cocok untuk kerja dan hiburan." },
+  { name: "Obeng Set", category: "Peralatan", price: 15000, img: "assets/img/PH.png", desc: "Set obeng lengkap berbagai ukuran untuk keperluan rumah." },
+  { name: "Tangga Lipat", category: "Peralatan", price: 25000, img: "assets/img/PH.png", desc: "Tangga lipat aluminium ringan dan kokoh." },
+  { name: "Sepeda Gunung", category: "Olahraga", price: 75000, img: "assets/img/PH.png", desc: "Sepeda gunung dengan suspensi ganda dan rem cakram." },
+  { name: "Meja Belajar", category: "Furnitur", price: 40000, img: "assets/img/PH.png", desc: "Meja belajar minimalis dengan desain modern." },
+  { name: "Kursi Kantor", category: "Furnitur", price: 45000, img: "assets/img/PH.png", desc: "Kursi kantor ergonomis untuk kenyamanan maksimal." },
+  { name: "Tenda Camping", category: "Lainnya", price: 60000, img: "assets/img/PH.png", desc: "Tenda berkapasitas 4 orang, tahan air dan mudah dipasang." },
+];
+
+// === Parse Query ===
+const params = new URLSearchParams(window.location.search);
+const itemName = params.get("item");
+
+// === Display Item ===
+function showDetail() {
+  const product = products.find(p => p.name === itemName);
+  const container = document.getElementById("detailContainer");
+  if (!product) {
+    container.innerHTML = "<p>Barang tidak ditemukan.</p>";
+    return;
+  }
+
+  container.innerHTML = `
+    <img src="${product.img}" alt="${product.name}">
+    <div class="detail-info">
+      <h2>${product.name}</h2>
+      <p><strong>Kategori:</strong> ${product.category}</p>
+      <p class="price">Rp ${product.price.toLocaleString()} / hari</p>
+      <p>${product.desc}</p>
+      <button class="btn btn-primary" onclick="addToCart('${product.name}')">Tambah ke Keranjang 🛒</button>
+    </div>
+  `;
+}
+
+// === Cart Logic ===
+function addToCart(name) {
+  const item = products.find(p => p.name === name);
+  if (!item) return;
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart.push(item);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  alert(`${item.name} ditambahkan ke keranjang ✅`);
+}
+
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  document.getElementById("cartCount").textContent = cart.length;
+}
+
+// === Init ===
+window.onload = () => {
+  showDetail();
+  updateCartCount();
+};
+</script>
+
+</body>
+</html>

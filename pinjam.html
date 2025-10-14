@@ -5,6 +5,64 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Keranjang - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+.cart-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+.cart-item:last-child { border-bottom: none; }
+.cart-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.item-info {
+  flex: 1;
+  margin-left: 10px;
+}
+.item-name { font-weight: bold; }
+.item-price { color: #007a33; }
+.cart-total {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: right;
+  font-weight: bold;
+}
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.btn-danger {
+  background: #c0392b;
+  color: white;
+}
+.btn-danger:hover { background: #922b21; }
+.btn-primary {
+  background: #007a33;
+  color: white;
+}
+.btn-primary:hover { background: #005c26; }
+.empty {
+  text-align: center;
+  color: #777;
+  padding: 40px 0;
+}
+</style>
 </head>
 <body>
 
@@ -23,15 +81,14 @@
   </div>
 </nav>
 
-<div class="container" style="margin-top:18px">
-  <h2>Keranjang Pinjaman</h2>
-  <p>Barang-barang yang kamu tambahkan untuk disewa.</p>
+<div class="cart-container">
+  <h2>Keranjang Kamu 🛒</h2>
+  <div id="cartItems"></div>
+  <div class="cart-total" id="cartTotal"></div>
 
-  <div id="cartItems" class="cart-list"></div>
-
-  <div class="cart-footer">
-    <h3 id="cartTotal">Total: Rp0</h3>
-    <button class="btn" onclick="goToPayment()">Lanjut ke Pembayaran</button>
+  <div style="margin-top:20px;text-align:right">
+    <a href="browsing.html" class="btn btn-outline">← Lanjut Belanja</a>
+    <button class="btn btn-primary" onclick="goToPayment()">Lanjut ke Pembayaran</button>
   </div>
 </div>
 
@@ -39,6 +96,73 @@
   © PinjamBarang — Prototype • dibuat untuk demo
 </footer>
 
-<script src="assets/js/script.js"></script>
+<script>
+// === Update Cart Count ===
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+}
+
+// === Display Cart ===
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  if (cart.length === 0) {
+    container.innerHTML = '<div class="empty">Keranjang kamu kosong 😴</div>';
+    totalEl.textContent = '';
+    return;
+  }
+
+  let html = '';
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    const price = item.price || 0;
+    total += price;
+    html += `
+      <div class="cart-item">
+        <img src="${item.img || 'assets/img/PH.png'}" alt="${item.name}">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">Rp ${price.toLocaleString()}</div>
+        </div>
+        <button class="btn btn-danger" onclick="removeItem(${index})">Hapus</button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  totalEl.textContent = `Total: Rp ${total.toLocaleString()}`;
+}
+
+// === Remove item ===
+function removeItem(index) {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+  updateCartCount();
+}
+
+// === Payment Redirect ===
+function goToPayment() {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  console.log("Cart contents:", cart); // Debug log
+  if (cart.length === 0) {
+    alert("Keranjang kamu kosong 😅");
+    return;
+  }
+  window.location.href = "payment.html";
+}
+
+
+// === Init ===
+window.onload = function() {
+  updateCartCount();
+  renderCart();
+};
+</script>
 </body>
 </html>

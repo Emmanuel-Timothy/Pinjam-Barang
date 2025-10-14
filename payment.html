@@ -3,53 +3,142 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Payment - PinjamBarang</title>
+<title>Pembayaran - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-  .cart-summary {
-    background: #fafafa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  }
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #eee;
-    padding: 8px 0;
-  }
-  .cart-item:last-child {
-    border-bottom: none;
-  }
-  .cart-total {
-    text-align: right;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  .success-message {
-    display: none;
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    background: #e8fff1;
-    color: #107a3a;
-    margin-top: 20px;
-    font-weight: bold;
-    animation: fadeIn 0.8s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f5f7f6;
+  margin: 0;
+  color: #333;
+}
+
+/* === 🆕 Popup Styling === */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 10px;
+  padding: 25px 35px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.popup.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup h3 {
+  color: #007a33;
+  margin-bottom: 10px;
+}
+
+.popup p {
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 720px;
+  margin: 40px auto;
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #007a33;
+  margin-bottom: 25px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.option {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.option:hover {
+  border-color: #007a33;
+  background: #f4fff7;
+}
+
+.option.active {
+  border-color: #007a33;
+  background: #eaffea;
+}
+
+.option img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.btn {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background: #007a33;
+  color: white;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.btn-primary:hover {
+  background: #005f27;
+}
+
+.summary {
+  margin-top: 25px;
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  font-size: 18px;
+  text-align: right;
+  color: #222;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #007a33;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
 
 <nav class="navbar">
-  <div class="logo">
-    <img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover">
-  </div>
+  <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="browsing.html">Browsing</a>
@@ -63,27 +152,36 @@
   </div>
 </nav>
 
-<div class="container" style="margin-top:18px;max-width:640px">
-  <h2>Pembayaran</h2>
-  <p>Berikut barang yang akan kamu pinjam:</p>
+<!-- 🆕 Popup element -->
+<div class="popup" id="popupSuccess">
+  <h3>Pembayaran Berhasil ✅</h3>
+  <p>Terima kasih telah menggunakan PinjamBarang!</p>
+</div>
 
-  <div id="cartSummary" class="cart-summary"></div>
+<div class="container">
+  <h2>Pilih Metode Pembayaran</h2>
 
-  <p>Pilih metode pembayaran (demo):</p>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button class="btn btn-primary" onclick="pay('E-Wallet')">E-Wallet</button>
-    <button class="btn btn-outline" onclick="pay('Transfer Bank')">Bank Transfer</button>
-    <button class="btn btn-outline" onclick="pay('PayLater')">PayLater</button>
+  <div class="payment-options">
+    <div class="option" onclick="selectOption(this, 'transfer')">
+      <span>🏦 Transfer Bank</span>
+      <img src="assets/img/PH.png" alt="Bank">
+    </div>
+    <div class="option" onclick="selectOption(this, 'ewallet')">
+      <span>📱 E-Wallet (GoPay, OVO, DANA)</span>
+      <img src="assets/img/PH.png" alt="E-Wallet">
+    </div>
+    <div class="option" onclick="selectOption(this, 'cod')">
+      <span>🚚 Bayar di Tempat (COD)</span>
+      <img src="assets/img/PH.png" alt="COD">
+    </div>
   </div>
 
-  <div id="successMsg" class="success-message">
-    Pembayaran Berhasil ✅<br>
-    Mengosongkan keranjang...
+  <div class="summary" id="totalSummary">
+    Total: Rp 0
   </div>
-  
-  <div style="margin-top:18px;text-align:center">
-    <a class="btn btn-primary" id="doneBtn" href="index.html" style="display:none;">Kembali ke Beranda</a>
-  </div>
+
+  <button class="btn btn-primary" onclick="confirmPayment()">Konfirmasi Pembayaran</button>
+  <a href="pinjam.html" class="back-link">← Kembali ke Keranjang</a>
 </div>
 
 <footer class="footer">
@@ -91,56 +189,53 @@
 </footer>
 
 <script>
-// 🧾 Load and show cart
-const cartCount = document.getElementById("cartCount");
-const cartSummary = document.getElementById("cartSummary");
-
-function updateCartDisplay() {
+// Update cart count display
+function updateCartCount() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  cartCount.textContent = cart.length;
+  document.getElementById("cartCount").textContent = cart.length;
+}
 
-  if (cart.length === 0) {
-    cartSummary.innerHTML = "<p>Keranjang kosong.</p>";
-    return;
-  }
-
+// Display total cost
+function displayTotal() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   let total = 0;
-  let html = "";
-
-  cart.forEach(item => {
-    const price = item.price || 0;
-    total += price;
-    html += `
-      <div class="cart-item">
-        <span>${item.name || "Barang Tanpa Nama"}</span>
-        <span>Rp ${price.toLocaleString()}</span>
-      </div>`;
-  });
-
-  html += `<div class="cart-total">Total: Rp ${total.toLocaleString()}</div>`;
-  cartSummary.innerHTML = html;
+  cart.forEach(item => { total += item.price; });
+  document.getElementById("totalSummary").textContent = "Total: Rp " + total.toLocaleString();
 }
 
-// 💳 Payment Simulation
-function pay(method) {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  if (cart.length === 0) {
-    alert("Keranjang masih kosong, tidak bisa melakukan pembayaran!");
+let selectedMethod = null;
+function selectOption(el, method) {
+  document.querySelectorAll(".option").forEach(opt => opt.classList.remove("active"));
+  el.classList.add("active");
+  selectedMethod = method;
+}
+
+function confirmPayment() {
+  if (!selectedMethod) {
+    alert("Pilih metode pembayaran terlebih dahulu!");
     return;
   }
 
-  alert(`Pembayaran via ${method} berhasil — demo OK ✅`);
+  // === 🆕 Show popup fade ===
+  const popup = document.getElementById("popupSuccess");
+  popup.classList.add("active");
+
+  // Simulate payment success
   localStorage.removeItem("cart");
-  cartCount.textContent = 0;
-  cartSummary.innerHTML = "<p>Keranjang dikosongkan.</p>";
-  document.getElementById("successMsg").style.display = "block";
-  document.querySelectorAll(".btn").forEach(btn => btn.disabled = true);
+
+  // Wait 2.5s, fade out, then redirect
   setTimeout(() => {
-    document.getElementById("doneBtn").style.display = "inline-block";
-  }, 1500);
+    popup.classList.remove("active");
+    setTimeout(() => {
+      window.location.href = "pinjam.html?clearCart=true";
+    }, 500);
+  }, 2500);
 }
 
-updateCartDisplay();
+window.onload = () => {
+  updateCartCount();
+  displayTotal();
+};
 </script>
 
 </body>

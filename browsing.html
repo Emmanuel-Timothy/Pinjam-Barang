@@ -6,85 +6,42 @@
 <title>Browsing - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-/* --- Minor layout tweaks --- */
 .category-list {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;
 }
-
 .category-item {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  width: 120px;
-  text-align: center;
-  cursor: pointer;
+  border: 1px solid #ccc; border-radius: 10px; padding: 10px;
+  width: 120px; text-align: center; cursor: pointer;
   transition: all 0.3s ease;
 }
-.category-item:hover {
-  background-color: #f0f0f0;
-  transform: scale(1.05);
-}
-.category-item img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 5px;
-}
+.category-item:hover { background-color: #f0f0f0; transform: scale(1.05); }
+.category-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; }
 
 .search-container {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  display: flex; gap: 10px; margin: 15px 0;
 }
-
 .search-container input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  flex: 1; padding: 8px 10px; border-radius: 6px; border: 1px solid #ccc;
 }
-
 .search-container button {
-  padding: 8px 12px;
-  border: none;
-  background-color: #333;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 8px 12px; border: none; background-color: #333; color: white;
+  border-radius: 6px; cursor: pointer;
 }
-.search-container button:hover {
-  background-color: #555;
-}
+.search-container button:hover { background-color: #555; }
 
 .product-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px; margin-top: 15px;
 }
-
 .product-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 10px;
-  text-align: center;
-  background-color: white;
-  transition: 0.3s;
+  border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+  text-align: center; background-color: white; transition: 0.3s;
 }
-.product-card:hover {
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-}
+.product-card:hover { box-shadow: 0 0 8px rgba(0,0,0,0.1); }
 .product-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;
 }
+.price { color: #009933; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -106,6 +63,7 @@
 
 <div class="container" style="margin-top:20px;max-width:900px">
   <h2>Jelajahi Barang</h2>
+  
   <div class="category-list">
     <div class="category-item" onclick="filterCategory('Elektronik')">
       <img src="assets/img/PH.png" alt="Elektronik">
@@ -143,19 +101,19 @@
 </footer>
 
 <script>
-// === Dummy Data ===
+// === Product Data ===
 const products = [
-  { name: "Kamera Canon", category: "Elektronik", img: "assets/img/PH.png" },
-  { name: "Laptop ASUS", category: "Elektronik", img: "assets/img/PH.png" },
-  { name: "Obeng Set", category: "Peralatan", img: "assets/img/PH.png" },
-  { name: "Tangga Lipat", category: "Peralatan", img: "assets/img/PH.png" },
-  { name: "Sepeda Gunung", category: "Olahraga", img: "assets/img/PH.png" },
-  { name: "Meja Belajar", category: "Furnitur", img: "assets/img/PH.png" },
-  { name: "Kursi Kantor", category: "Furnitur", img: "assets/img/PH.png" },
-  { name: "Tenda Camping", category: "Lainnya", img: "assets/img/PH.png" },
+  { name: "Kamera Canon", category: "Elektronik", price: 50000, img: "assets/img/PH.png" },
+  { name: "Laptop ASUS", category: "Elektronik", price: 100000, img: "assets/img/PH.png" },
+  { name: "Obeng Set", category: "Peralatan", price: 15000, img: "assets/img/PH.png" },
+  { name: "Tangga Lipat", category: "Peralatan", price: 25000, img: "assets/img/PH.png" },
+  { name: "Sepeda Gunung", category: "Olahraga", price: 75000, img: "assets/img/PH.png" },
+  { name: "Meja Belajar", category: "Furnitur", price: 40000, img: "assets/img/PH.png" },
+  { name: "Kursi Kantor", category: "Furnitur", price: 45000, img: "assets/img/PH.png" },
+  { name: "Tenda Camping", category: "Lainnya", price: 60000, img: "assets/img/PH.png" },
 ];
 
-// === Display Function ===
+// === Display Products ===
 function displayProducts(list) {
   const container = document.getElementById("productList");
   container.innerHTML = "";
@@ -166,36 +124,59 @@ function displayProducts(list) {
   list.forEach(p => {
     container.innerHTML += `
       <div class="product-card">
-        <img src="${p.img}" alt="${p.name}">
+        <img src="${p.img}" alt="${p.name}" onclick="goToDetail('${p.name}')">
         <h4>${p.name}</h4>
         <p><small>${p.category}</small></p>
-        <button class="btn btn-primary" onclick="alert('Ditambahkan ke keranjang (demo)')">Pinjam</button>
+        <p class="price">Rp ${p.price.toLocaleString()}</p>
+        <button class="btn btn-primary" onclick="addToCart('${p.name}')">+ Keranjang</button>
       </div>
     `;
   });
 }
 
-// === Filter by Category ===
+// === Category & Search ===
 function filterCategory(cat) {
   const filtered = products.filter(p => p.category === cat);
   displayProducts(filtered);
 }
 
-// === Search Product ===
 function searchProduct() {
   const keyword = document.getElementById("searchInput").value.toLowerCase();
   const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
   displayProducts(filtered);
 }
 
-// === Show All ===
 function showAll() {
   document.getElementById("searchInput").value = "";
   displayProducts(products);
 }
 
+// === Cart Logic ===
+function addToCart(name) {
+  const item = products.find(p => p.name === name);
+  if (!item) return;
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart.push(item);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  alert(`${item.name} ditambahkan ke keranjang ✅`);
+}
+
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  document.getElementById("cartCount").textContent = cart.length;
+}
+
+// === Detail Redirect ===
+function goToDetail(name) {
+  window.location.href = `detail.html?item=${encodeURIComponent(name)}`;
+}
+
 // === Init ===
-window.onload = () => showAll();
+window.onload = () => {
+  showAll();
+  updateCartCount();
+};
 </script>
 
 </body>
