@@ -101,24 +101,20 @@ function toggleMenu() {
   
   <div class="category-list">
     <div class="category-item" onclick="filterCategory('Elektronik')">
-      <img src="assets/img/PH.png" alt="Elektronik">
+      <img src="assets/img/elektronik-icon.png" alt="Elektronik" onerror="this.src='assets/img/PH.png'">
       <p>Elektronik</p>
     </div>
     <div class="category-item" onclick="filterCategory('Peralatan')">
-      <img src="assets/img/PH.png" alt="Peralatan">
+      <img src="assets/img/peralatan-icon.png" alt="Peralatan" onerror="this.src='assets/img/PH.png'">
       <p>Peralatan</p>
     </div>
     <div class="category-item" onclick="filterCategory('Olahraga')">
-      <img src="assets/img/PH.png" alt="Olahraga">
+      <img src="assets/img/olahraga-icon.png" alt="Olahraga" onerror="this.src='assets/img/PH.png'">
       <p>Olahraga</p>
     </div>
     <div class="category-item" onclick="filterCategory('Furnitur')">
-      <img src="assets/img/PH.png" alt="Furnitur">
+      <img src="assets/img/furnitur-icon.png" alt="Furnitur" onerror="this.src='assets/img/PH.png'">
       <p>Furnitur</p>
-    </div>
-    <div class="category-item" onclick="filterCategory('Lainnya')">
-      <img src="assets/img/PH.png" alt="Lainnya">
-      <p>Lainnya</p>
     </div>
   </div>
 
@@ -138,14 +134,13 @@ function toggleMenu() {
 <script>
 // === Product Data ===
 const products = [
-  { name: "Kamera Canon", category: "Elektronik", price: 50000, img: "assets/img/PH.png" },
-  { name: "Laptop ASUS", category: "Elektronik", price: 100000, img: "assets/img/PH.png" },
-  { name: "Obeng Set", category: "Peralatan", price: 15000, img: "assets/img/PH.png" },
-  { name: "Tangga Lipat", category: "Peralatan", price: 25000, img: "assets/img/PH.png" },
-  { name: "Sepeda Gunung", category: "Olahraga", price: 75000, img: "assets/img/PH.png" },
+  { name: "Proyektor HD", category: "Elektronik", price: 100000, img: "assets/img/PH.png" },
+  { name: "Kamera DSLR", category: "Elektronik", price: 80000, img: "assets/img/PH.png" },
+  { name: "Set Berkebun", category: "Peralatan", price: 25000, img: "assets/img/PH.png" },
+  { name: "Mesin Jahit", category: "Peralatan", price: 35000, img: "assets/img/PH.png" },
+  { name: "Tenda Camping", category: "Olahraga", price: 60000, img: "assets/img/PH.png" },
   { name: "Meja Belajar", category: "Furnitur", price: 40000, img: "assets/img/PH.png" },
-  { name: "Kursi Kantor", category: "Furnitur", price: 45000, img: "assets/img/PH.png" },
-  { name: "Tenda Camping", category: "Lainnya", price: 60000, img: "assets/img/PH.png" },
+  { name: "Kursi Kantor", category: "Furnitur", price: 45000, img: "assets/img/PH.png" }
 ];
 
 // === Display Products ===
@@ -210,14 +205,13 @@ function setInventory(inv) {
 }
 // Always reset inventory to demo values on page load (for demo/testing)
 const inv = {
-  "Kamera Canon": 2,
-  "Laptop ASUS": 0, // out of stock
-  "Obeng Set": 8,
-  "Tangga Lipat": 4,
-  "Sepeda Gunung": 1,
-  "Meja Belajar": 6,
-  "Kursi Kantor": 3,
-  "Tenda Camping": 5
+  "Proyektor HD": 3,
+  "Kamera DSLR": 2,
+  "Set Berkebun": 5,
+  "Mesin Jahit": 4,
+  "Tenda Camping": 6,
+  "Meja Belajar": 4,
+  "Kursi Kantor": 3
 };
 setInventory(inv);
 
@@ -249,6 +243,18 @@ function addToCart(name) {
 
 function closeModal() {
   document.getElementById("rentModal").style.display = "none";
+}
+
+// Validate quantity based on available stock
+function validateQuantity() {
+  const qtyInput = document.getElementById("rentQty");
+  const qty = parseInt(qtyInput.value);
+  if (qty > availableQty) {
+    qtyInput.value = availableQty;
+  }
+  if (qty < 1) {
+    qtyInput.value = 1;
+  }
 }
 
 // Helper: get all dates between two dates (inclusive)
@@ -362,7 +368,7 @@ window.onload = () => {
     <h3>Sewa Barang</h3>
     <p id="rentItemName"></p>
     <label>Jumlah Barang:</label><br>
-  <input type="number" id="rentQty" min="1" value="1" style="width:80%;margin:5px 0;padding:5px;"><br>
+  <input type="number" id="rentQty" min="1" max="99" onchange="validateQuantity()" style="width:80%;margin:5px 0;padding:5px;"><br>
   <span id="rentAvailable" style="display:block;margin-bottom:5px;color:#009933;font-weight:600"></span>
   <label>Tanggal Mulai:</label><br>
   <input type="date" id="rentStart" style="width:80%;margin:5px 0;padding:5px;"><br>

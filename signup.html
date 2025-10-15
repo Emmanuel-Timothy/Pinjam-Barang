@@ -10,7 +10,12 @@
 
 <nav class="navbar">
   <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
-  <div class="nav-links">
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="nav-links" id="navLinks">
     <a href="index.html">Home</a>
     <a href="browsing.html">Browsing</a>
     <a href="tentang.html">Tentang Kami</a>
@@ -22,6 +27,13 @@
     </a>
   </div>
 </nav>
+
+<script>
+function toggleMenu() {
+  const navLinks = document.getElementById('navLinks');
+  navLinks.classList.toggle('active');
+}
+</script>
 
 
 <div class="container" style="max-width:520px;margin-top:36px">

@@ -89,4 +89,16 @@ function goToPayment() {
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
   renderCart();
+  
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (e) => {
+    const navLinks = document.getElementById('navLinks');
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (navLinks && navLinks.classList.contains('active')) {
+      if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+        navLinks.classList.remove('active');
+        menuToggle.classList.remove('active');
+      }
+    }
+  });
 });

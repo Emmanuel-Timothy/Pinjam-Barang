@@ -57,10 +57,21 @@ body{font-family:'Poppins',sans-serif;margin:0;background:var(--bg);color:#111}
 }
 @media (max-width: 480px) {
   .container { padding: 0 12px; }
+  .hero { padding: 40px 20px; }
   .hero h1 { font-size: 28px; }
   .hero p { font-size: 16px; }
   .btn { width: 100%; margin-bottom: 8px; text-align: center; }
   .card-grid { grid-template-columns: 1fr; }
+  .detail-container { padding: 15px; }
+  .detail-container img { width: 100%; height: auto; }
+  .chat-window { height: calc(100vh - 200px); }
+  .payment-options label { padding: 15px 10px; }
+  .cart-item { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .cart-item button { width: 100%; }
+  .menu-toggle span { transition: 0.3s; }
+  .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 }
 .chat-window{height:400px;background:#fff;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
 .messages{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
