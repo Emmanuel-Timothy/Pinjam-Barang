@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Browsing - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<!-- Add Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 .category-list {
   display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;
@@ -65,6 +67,15 @@
   margin-bottom: 8px;
 }
 .price { color: #009933; font-weight: 600; }
+/* Map modal styles */
+#locModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999; }
+#locModal .modal-inner { background:white; padding:12px; border-radius:8px; max-width:720px; width:95%; box-sizing:border-box; }
+#mapSelect { height:360px; width:100%; border-radius:6px; margin-bottom:8px; }
+.loc-controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.loc-controls input[type="range"] { flex:1; }
+.loc-info { font-size:13px; color:#333; }
+.loc-apply { background:#007bff;color:#fff;padding:7px 12px;border-radius:6px;border:none;cursor:pointer; }
+.loc-close { background:#ccc;color:#000;padding:7px 12px;border-radius:6px;border:none;cursor:pointer; }
 </style>
 </head>
 <body>
@@ -122,6 +133,8 @@ function toggleMenu() {
     <input type="text" id="searchInput" placeholder="Cari barang...">
     <button onclick="searchProduct()">Cari 🔍</button>
     <button onclick="showAll()">Jelajahi Semua Barang</button>
+   <!-- new: open location modal -->
+   <button onclick="openLocationModal()">Pilih Lokasi 📍</button>
   </div>
 
   <div class="product-list" id="productList"></div>
@@ -379,20 +392,140 @@ window.onload = () => {
   </div>
 </div>
 
+<!-- Location Modal -->
+<div id="locModal">
+  <div class="modal-inner">
+    <h3>Pilih Lokasi dan Radius</h3>
+    <div id="mapSelect"></div>
+    <div class="loc-controls">
+      <label style="white-space:nowrap">Radius:</label>
+      <!-- fixed 5km: slider disabled and set to 5000 -->
+      <input type="range" id="radiusRange" min="5000" max="5000" step="500" value="5000" disabled>
+      <div class="loc-info" id="radiusLabel">5.0 km</div>
+      <div style="flex:1"></div>
+      <button class="loc-apply" onclick="applyLocation()">Terapkan</button>
+      <button class="loc-close" onclick="closeLocationModal()">Tutup</button>
+    </div>
+    <div style="margin-top:8px;font-size:13px;color:#555">
+      Titik pusat: <span id="locCoords">-</span>
+    </div>
+  </div>
+</div>
+
+<!-- Add Leaflet JS and map handling script -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// Set min/max for rentStart and rentEnd to only allow 1 month from today
-function setDateLimits() {
-  const today = new Date();
-  const minDate = today.toISOString().split('T')[0];
-  const maxDateObj = new Date(today);
-  maxDateObj.setMonth(maxDateObj.getMonth() + 1);
-  const maxDate = maxDateObj.toISOString().split('T')[0];
-  document.getElementById('rentStart').setAttribute('min', minDate);
-  document.getElementById('rentStart').setAttribute('max', maxDate);
-  document.getElementById('rentEnd').setAttribute('min', minDate);
-  document.getElementById('rentEnd').setAttribute('max', maxDate);
-}
-document.addEventListener('DOMContentLoaded', setDateLimits);
+  // location/map state
+  let locMap, centerMarker, circleLayer, handleMarker;
+  let currentRadius = 5000; // meters fixed at 5 km
+  // Default center (Fredericton NB from image) - changeable
+  const defaultCenter = [-7.8015608, 110.364571];
+
+  function openLocationModal() {
+    document.getElementById('locModal').style.display = 'flex';
+    setTimeout(() => { initLocationMap(); }, 100); // slight delay to ensure modal visible
+  }
+
+  function closeLocationModal() {
+    document.getElementById('locModal').style.display = 'none';
+  }
+
+  function initLocationMap() {
+    if (!locMap) {
+      locMap = L.map('mapSelect').setView(defaultCenter, 8);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(locMap);
+
+      // create center marker
+      centerMarker = L.marker(defaultCenter, { draggable: true }).addTo(locMap);
+      centerMarker.on('drag', onCenterMoved);
+      centerMarker.on('move', onCenterMoved);
+
+      // create circle
+      circleLayer = L.circle(defaultCenter, { radius: currentRadius, color: '#007bff', fillOpacity: 0.06 }).addTo(locMap);
+
+      // create handle marker on circumference (east) - NOT draggable because radius is fixed
+      const handlePos = destinationPoint(defaultCenter[0], defaultCenter[1], currentRadius, 90);
+      handleMarker = L.marker(handlePos, { draggable: false, opacity: 0.9 }).addTo(locMap);
+
+      // update UI
+      updateLocUI();
+      locMap.invalidateSize();
+    } else {
+      // map already created: just update view & layers
+      locMap.invalidateSize();
+      const stored = JSON.parse(localStorage.getItem('selectedLocation') || 'null');
+      if (stored) {
+        centerMarker.setLatLng([stored.lat, stored.lng]);
+        currentRadius = stored.radius || currentRadius;
+      }
+      circleLayer.setLatLng(centerMarker.getLatLng()).setRadius(currentRadius);
+      moveHandleFromRadius();
+      updateLocUI();
+    }
+
+    // if saved selection exists, use it
+    const saved = JSON.parse(localStorage.getItem('selectedLocation') || 'null');
+    if (saved) {
+      centerMarker.setLatLng([saved.lat, saved.lng]);
+      currentRadius = saved.radius || currentRadius;
+      circleLayer.setLatLng(centerMarker.getLatLng()).setRadius(currentRadius);
+      moveHandleFromRadius();
+      updateLocUI();
+      locMap.setView(centerMarker.getLatLng(), locMap.getZoom());
+    }
+  }
+
+  function onCenterMoved() {
+    const c = centerMarker.getLatLng();
+    circleLayer.setLatLng(c);
+    moveHandleFromRadius();
+    updateLocUI();
+  }
+
+  function moveHandleFromRadius() {
+    const c = centerMarker.getLatLng();
+    const dest = destinationPoint(c.lat, c.lng, currentRadius, 90); // east
+    handleMarker.setLatLng(dest);
+  }
+
+  function updateLocUI() {
+    const c = centerMarker.getLatLng();
+    // always show 5.0 km (currentRadius == 5000)
+    document.getElementById('radiusLabel').textContent = `${(currentRadius/1000).toFixed(1)} km`;
+    document.getElementById('locCoords').textContent = `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}`;
+    document.getElementById('radiusRange').value = currentRadius;
+  }
+
+  function applyLocation() {
+    const c = centerMarker.getLatLng();
+    const selection = { lat: c.lat, lng: c.lng, radius: currentRadius };
+    localStorage.setItem('selectedLocation', JSON.stringify(selection));
+    closeLocationModal();
+    // You can call a filter function here to refresh product list based on selection.
+    alert(`Lokasi disimpan: ${selection.lat.toFixed(5)}, ${selection.lng.toFixed(5)} • Radius ${(selection.radius/1000).toFixed(1)} km`);
+  }
+
+  // simple destination point (lat, lon, distance in meters, bearing degrees)
+  // returns [lat, lon]
+  function destinationPoint(lat, lon, distance, bearing) {
+    const R = 6378137; // Earth radius in meters (WGS-84)
+    const δ = distance / R; // angular distance in radians
+    const θ = bearing * Math.PI / 180;
+    const φ1 = lat * Math.PI / 180;
+    const λ1 = lon * Math.PI / 180;
+
+    const φ2 = Math.asin(Math.sin(φ1) * Math.cos(δ) + Math.cos(φ1) * Math.sin(δ) * Math.cos(θ));
+    const λ2 = λ1 + Math.atan2(Math.sin(θ) * Math.sin(δ) * Math.cos(φ1), Math.cos(δ) - Math.sin(φ1) * Math.sin(φ2));
+
+    return [φ2 * 180 / Math.PI, (λ2 * 180 / Math.PI)];
+  }
+
+  // Expose functions to global scope used by markup
+  window.openLocationModal = openLocationModal;
+  window.closeLocationModal = closeLocationModal;
+  window.applyLocation = applyLocation;
 </script>
 
 </body>
