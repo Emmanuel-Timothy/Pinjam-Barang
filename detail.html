@@ -6,47 +6,44 @@
 <title>Detail Barang - PinjamBarang</title>
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
-.detail-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+/* Improved detail page styles (updated) */
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f5f6fa; margin:0; padding:0; }
+.container { max-width:940px; margin:20px auto; padding:16px; box-sizing:border-box; }
+.detail-card { background:#fff; border-radius:12px; padding:18px; box-shadow:0 6px 18px rgba(18,38,63,0.08); display:flex; gap:22px; align-items:flex-start; }
+.img-wrap { background:#f0fbf4; border-radius:10px; padding:18px; display:flex; align-items:center; justify-content:center; min-width:340px; max-width:40%; }
+.img-wrap img { width:100%; max-width:300px; border-radius:8px; object-fit:cover; display:block; }
+.details { flex:1; min-width:200px; }
+.title { margin:0 0 6px 0; font-size:22px; color:#13232b; }
+.meta { color:#6b7280; margin-bottom:10px; font-weight:600; }
+.price { color:#077a37; font-weight:800; font-size:20px; margin-bottom:10px; }
+.summary { color:#374151; margin-bottom:12px; line-height:1.4; }
+.avail { color:#077a37; font-weight:700; margin:10px 0; }
+.spec-list { margin-top:10px; color:#374151; }
+.spec-list dt { font-weight:700; margin-top:8px; }
+.actions { margin-top:16px; display:flex; gap:10px; align-items:center; width:100%; }
+.btn { padding:12px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+.btn-primary { background:#077a37;color:#fff; flex:1; box-shadow:0 2px 6px rgba(7,122,55,0.18); }
+.btn-primary:hover { filter:brightness(0.97); transform:translateY(-1px); }
+.btn-secondary { background:transparent;color:#0b5ed7;border:1px solid #d1e7ff;padding:10px 12px;border-radius:8px; }
+.back-link { display:inline-block; margin-bottom:12px; color:#0b5ed7; text-decoration:none; }
+/* Responsive */
+@media(max-width:820px){
+  .detail-card { flex-direction:column; align-items:center; }
+  .img-wrap { max-width:100%; min-width:auto; width:100%; }
+  .img-wrap img { max-width:420px; }
+  .details { width:100%; }
+  .actions { flex-direction:column-reverse; }
+  .btn-secondary { width:100%; }
 }
-.detail-container img {
-  width: 300px;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-.detail-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.detail-info h2 { margin: 0; }
-.detail-info p { margin: 6px 0; }
-.price { font-size: 20px; font-weight: bold; color: #007a33; }
-.btn { margin-top: 10px; padding: 10px 14px; border: none; border-radius: 6px; cursor: pointer; }
-.btn-primary { background: #007a33; color: white; }
-.btn-primary:hover { background: #005f27; }
-.btn-outline { background: white; border: 1px solid #007a33; color: #007a33; }
-.btn-outline:hover { background: #007a33; color: white; }
 </style>
 </head>
 <body>
 
+<!-- reuse navbar from browsing.html -->
 <nav class="navbar">
   <div class="logo"><img src="assets/img/LogoBW.png" alt="Logo" style="width:140px;height:55px;border-radius:6px;object-fit:cover"></div>
   <div class="menu-toggle" onclick="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
+    <span></span><span></span><span></span>
   </div>
   <div class="nav-links" id="navLinks">
     <a href="index.html">Home</a>
@@ -61,286 +58,144 @@
   </div>
 </nav>
 
-<script>
-function toggleMenu() {
-  const navLinks = document.getElementById('navLinks');
-  navLinks.classList.toggle('active');
-}
-</script>
+<div class="container">
+  <a class="back-link" href="browsing.html">← Kembali ke Jelajah</a>
 
-<div class="detail-container" id="detailContainer">
-  <p>Memuat data barang...</p>
-</div>
+  <div id="content" class="detail-card">
+    <div class="img-wrap"><img id="itemImg" src="assets/img/PH.png" alt="gambar barang"></div>
+    <div class="details">
+      <h2 id="itemName" class="title">Memuat...</h2>
+      <div id="itemCategory" class="meta"></div>
+      <div id="itemPrice" class="price"></div>
+      <p id="itemSummary" class="summary">—</p>
 
-<div style="text-align:center;margin:20px">
-  <a href="browsing.html" class="btn btn-outline">← Kembali ke Browsing</a>
-</div>
+      <div id="availability" class="avail" aria-live="polite"></div>
 
-<footer class="footer">
-  © PinjamBarang — Prototype • dibuat untuk demo
-</footer>
+      <div>
+        <h4 style="margin:0 0 6px 0">Spesifikasi</h4>
+        <dl id="specList" class="spec-list"></dl>
+      </div>
 
-<!-- Rent Modal -->
-<div id="rentModal" style="display:none; 
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000;">
-  <div style="background:white;padding:20px;border-radius:10px;max-width:350px;width:90%;text-align:center;">
-    <h3>Sewa Barang</h3>
-    <p id="rentItemName"></p>
-    <label>Jumlah Barang:</label><br>
-    <input type="number" id="rentQty" min="1" max="99" onchange="validateQuantity()" style="width:80%;margin:5px 0;padding:5px;"><br>
-    
-    <label>Tanggal Mulai:</label><br>
-    <input type="date" id="rentStart" style="width:80%;margin:5px 0;padding:5px;"><br>
-    
-    <label>Tanggal Selesai:</label><br>
-    <input type="date" id="rentEnd" style="width:80%;margin:5px 0;padding:5px;"><br>
-
-    <button onclick="confirmRent()" style="background:#28a745;color:white;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Tambahkan ke Keranjang</button>
-    <button onclick="closeModal()" style="background:#ccc;color:black;padding:8px 15px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Batal</button>
+      <div class="actions" style="margin-top:18px">
+        <button class="btn btn-primary" id="addCartBtn">Tambah ke Keranjang</button>
+        <a class="btn btn-secondary" href="browsing.html">Lihat Semua</a>
+      </div>
+    </div>
   </div>
 </div>
 
+<footer class="footer" style="text-align:center;padding:12px 0;background:transparent;">
+  © PinjamBarang — Prototype • dibuat untuk demo
+</footer>
+
 <script>
-// Product data (same as browsing.html)
-const products = [
-  { name: "Proyektor", category: "Elektronik", price: 100000, img: "assets/img/Proyektor.png", desc: "Proyektor berkualitas tinggi, cocok untuk presentasi dan home cinema." },
-  { name: "Kamera", category: "Elektronik", price: 80000, img: "assets/img/Kamera.png", desc: "Kamera profesional untuk fotografi berkualitas tinggi." },
-  { name: "Set Berkebun", category: "Peralatan", price: 25000, img: "assets/img/Gardening.png", desc: "Peralatan berkebun lengkap termasuk sekop, gunting, dan alat penyiram." },
-  { name: "Mesin Jahit", category: "Peralatan", price: 35000, img: "assets/img/Jahit.png", desc: "Mesin jahit portable dengan berbagai fungsi jahitan." },
-  { name: "Tenda Camping", category: "Olahraga", price: 60000, img: "assets/img/Tenda.png", desc: "Tenda camping 4 orang, tahan air dan mudah dipasang." },
-  { name: "Set Padel", category: "Olahraga", price: 40000, img: "assets/img/Padel.png", desc: "Set padel untuk 2 orang, nyaman dan nyaman." },
-  { name: "Ranjang Bayi", category: "Furnitur", price: 45000, img: "assets/img/BC.png", desc: "Ranjang bayi dengan desain modern dan ergonomis." }
-];
+function toggleMenu(){ const navLinks = document.getElementById('navLinks'); navLinks.classList.toggle('active'); }
 
-// === Parse Query ===
-const params = new URLSearchParams(window.location.search);
-const itemName = params.get("item");
+// Spesifikasi data (same as before)
+const specs = {
+  "Proyektor": { category:"Elektronik", price:100000, img:"assets/img/Projector.png", spesifikasi: {"Merek":"Generic","Resolusi":"1080p","Kecerahan":"3000 lumens","Port":"HDMI, USB, VGA","Berat":"1.2 kg","Kondisi":"Baik"} },
+  "Kamera": { category:"Elektronik", price:80000, img:"assets/img/Kamera.png", spesifikasi: {"Merek":"Canon/Nikon","Tipe":"DSLR/Mirrorless","Resolusi":"24 MP","Lensa":"Kit 18-55mm","Aksesori":"Tas & baterai cadangan","Kondisi":"Baik"} },
+  "Set Berkebun": { category:"Peralatan", price:25000, img:"assets/img/Gardening.png", spesifikasi: {"Isi":"Sekop, garpu, sarung tangan","Bahan":"Baja & kayu","Kondisi":"Baik"} },
+  "Mesin Jahit": { category:"Peralatan", price:35000, img:"assets/img/Jahit.png", spesifikasi: {"Merek":"Jack","Tipe":"Elektrik portable","Fitur":"Beberapa jahitan, reverse","Kondisi":"Baik"} },
+  "Tenda Camping": { category:"Hobi", price:60000, img:"assets/img/Tenda.png", spesifikasi: {"Kapasitas":"2-4 orang","Bahan":"Tahan air","Ukuran":"200x200x120 cm","Kondisi":"Baik"} },
+  "Set Padel": { category:"Hobi", price:40000, img:"assets/img/Padel.png", spesifikasi: {"Isi":"2 raket, 3 bola","Merek":"Generic","Kondisi":"Baik"} },
+  "Ranjang Bayi": { category:"Furnitur", price:45000, img:"assets/img/BC.png", spesifikasi: {"Ukuran":"120x60 cm","Bahan":"Kayu lapis","Fitur":"Bisa dirakit","Kondisi":"Baik"} },
+  "Biola": { category:"Musik", price:75000, img:"assets/img/Biola.png", spesifikasi: {"Ukuran":"4/4","Bahan":"Kayu spruce & maple","Termasuk":"Busur & kasing","Kondisi":"Baik"} },
+  "Cello": { category:"Musik", price:120000, img:"assets/img/Cello.png", spesifikasi: {"Ukuran":"4/4","Bahan":"Kayu solid","Termasuk":"Kursi & busur","Kondisi":"Baik"} },
+  "Gitar Elektrik": { category:"Musik", price:90000, img:"assets/img/Gitar Elektrik.png", spesifikasi: {"Merek":"Fender/Generic","Tipe":"Solid-body","Termasuk":"Kabel, strap","Kondisi":"Baik"} },
+  "Teleskop": { category:"Hobi", price:110000, img:"assets/img/Teleskop.png", spesifikasi: {"Tipe":"Reflector","Aperture":"114 mm","Mount":"Alt-Az tripod","Termasuk":"Okuler 25mm & 10mm","Kondisi":"Baik"} },
+  "Air Fryer": { category:"Furnitur", price:50000, img:"assets/img/Air Fyer.png", spesifikasi: {"Kapasitas":"3.5 L","Daya":"1500W","Fitur":"Timer, temperatur adjustable","Kondisi":"Baik"} },
+  "Griller": { category:"Furnitur", price:45000, img:"assets/img/Griller.png", spesifikasi: {"Tipe":"Electric griller","Daya":"2000W","Ukuran":"Medium","Kondisi":"Baik"} },
+  "Oven": { category:"Furnitur", price:70000, img:"assets/img/Oven.png", spesifikasi: {"Tipe":"Countertop oven","Kapasitas":"20 L","Daya":"1500W","Fitur":"Convection","Kondisi":"Baik"} },
+  "Kipas Angin": { category:"Elektronik", price:20000, img:"assets/img/Kipas Angin.png", spesifikasi: {"Tipe":"Tower/meja","Kecepatan":"3-level","Daya":"50-60W","Kondisi":"Baik"} },
+  "Printer": { category:"Elektronik", price:60000, img:"assets/img/Printer.png", spesifikasi: {"Tipe":"Inkjet/Laser","Fitur":"Print, scan, copy","Konektivitas":"USB/Wi-Fi","Kondisi":"Baik"} },
+  "DJ Controller": { category:"Musik", price:130000, img:"assets/img/DJ Controller.png", spesifikasi: {"Merek":"Pioneer/Numark","Fitur":"Mixer, jog wheels, pads","Konektivitas":"USB","Kondisi":"Baik"} },
+  "Set Alat Golf": { category:"Hobi", price:150000, img:"assets/img/Set Alat Golf.png", spesifikasi: {"Isi":"Driver, iron set, putter, tas","Merek":"Generic","Kondisi":"Baik"} }
+};
 
-let selectedItem = null;
+function qs(key){ const params = new URLSearchParams(window.location.search); return params.get(key); }
 
-// === Inventory Logic (same as browsing.html) ===
+// Inventory/bookings helpers (reuse same keys as browsing)
 const defaultStock = 5;
-const initialStock = {
-  "Proyektor HD": 3,
-  "Kamera DSLR": 2,
-  "Set Berkebun": 5,
-  "Mesin Jahit": 4,
-  "Tenda Camping": 6,
-  "Meja Belajar": 4,
-  "Kursi Kantor": 3
-};
-function getInventory() {
-  return JSON.parse(localStorage.getItem("inventory") || "{}")
-}
-function setInventory(inv) {
-  localStorage.setItem("inventory", JSON.stringify(inv));
-}
-// Always reset inventory for demo
-setInventory(initialStock);
-function getBookings() {
-  return JSON.parse(localStorage.getItem("bookings") || "{}")
-}
-function setBookings(b) {
-  localStorage.setItem("bookings", JSON.stringify(b));
-}
-// Helper: get all dates between two dates (inclusive)
-function getDateRange(start, end) {
-  const arr = [];
-  let dt = new Date(start);
-  while (dt <= end) {
-    arr.push(dt.toISOString().split('T')[0]);
-    dt.setDate(dt.getDate() + 1);
-  }
-  return arr;
-}
+function getInventory(){ return JSON.parse(localStorage.getItem("inventory") || "{}"); }
+function getBookings(){ return JSON.parse(localStorage.getItem("bookings") || "{}"); }
 
-// === Display Item ===
-function showDetail() {
-  const product = products.find(p => p.name === itemName);
-  const container = document.getElementById("detailContainer");
-  if (!product) {
-    container.innerHTML = "<p>Barang tidak ditemukan.</p>";
-    return;
-  }
-  // Calculate available today
+function computeAvailability(name){
   const inv = getInventory();
   const bookings = getBookings();
-  const today = new Date();
+  const today = new Date(); today.setHours(0,0,0,0);
   const todayStr = today.toISOString().split('T')[0];
-  const stock = inv[product.name] !== undefined ? inv[product.name] : defaultStock;
-  const bookedToday = (bookings[product.name] && bookings[product.name][todayStr]) || 0;
-  const availableToday = Math.max(0, stock - bookedToday);
-  const outOfStock = availableToday <= 0;
-  container.innerHTML = `
-    <img src="${product.img}" alt="${product.name}">
-    <div class="detail-info">
-      <h2>${product.name}</h2>
-      <p><strong>Kategori:</strong> ${product.category}</p>
-      <p class="price">Rp ${product.price.toLocaleString()} / hari</p>
-      <p>${product.desc}</p>
-      <p style="margin:4px 0;font-weight:600;color:${outOfStock ? '#c00' : '#009933'}">
-        ${outOfStock ? 'Stok Habis hari ini' : `Tersedia hari ini: ${availableToday}`}
-      </p>
-      <button class="btn btn-primary" onclick="addToCart('${product.name}')" ${outOfStock ? 'disabled style=\"background:#aaa;cursor:not-allowed\"' : ''}>Tambah ke Keranjang 🛒</button>
-    </div>
-  `;
+  const stock = (inv && inv[name]) !== undefined ? inv[name] : defaultStock;
+  const bookedToday = (bookings[name] && bookings[name][todayStr]) || 0;
+  return Math.max(0, stock - bookedToday);
 }
 
-// === Cart Logic with Modal ===
-let availableQty = defaultStock;
-function addToCart(name) {
-  selectedItem = products.find(p => p.name === name);
-  if (!selectedItem) return;
-  document.getElementById("rentItemName").textContent = selectedItem.name;
-  document.getElementById("rentStart").value = "";
-  document.getElementById("rentEnd").value = "";
-  document.getElementById("rentQty").value = 1;
-  document.getElementById("rentQty").disabled = false;
-  document.getElementById("rentStart").disabled = false;
-  document.getElementById("rentEnd").disabled = false;
-  // Add or show available info
-  if (!document.getElementById("rentAvailable")) {
-    const qtyInput = document.getElementById("rentQty");
-    const span = document.createElement("span");
-    span.id = "rentAvailable";
-    span.style.display = "block";
-    span.style.marginBottom = "5px";
-    span.style.color = "#009933";
-    span.style.fontWeight = "600";
-    qtyInput.parentNode.insertBefore(span, qtyInput.nextSibling);
+// render item details including summary & availability
+function showItem(name){
+  const item = specs[name];
+  const title = document.getElementById('itemName');
+  const img = document.getElementById('itemImg');
+  const cat = document.getElementById('itemCategory');
+  const priceEl = document.getElementById('itemPrice');
+  const dl = document.getElementById('specList');
+  const summaryEl = document.getElementById('itemSummary');
+  const availEl = document.getElementById('availability');
+  dl.innerHTML = '';
+  if(!item){
+    title.textContent = 'Barang tidak ditemukan';
+    img.src = 'assets/img/PH.png';
+    cat.textContent = '';
+    priceEl.textContent = '';
+    summaryEl.textContent = '';
+    availEl.textContent = '';
+    document.getElementById('addCartBtn').disabled = true;
+    return;
   }
-  document.getElementById("rentAvailable").textContent = "";
-  document.getElementById("rentModal").style.display = "flex";
-}
+  title.textContent = name;
+  img.src = item.img || 'assets/img/PH.png';
+  img.alt = name;
+  cat.textContent = `Kategori: ${item.category || '-'}`;
+  priceEl.textContent = item.price ? `Rp ${item.price.toLocaleString()} / hari` : '';
+  summaryEl.textContent = item.summary || (item.spesifikasi ? Object.values(item.spesifikasi).slice(0,2).join(' · ') : '');
 
-function closeModal() {
-  document.getElementById("rentModal").style.display = "none";
-}
-
-// Validate quantity based on available stock
-function validateQuantity() {
-  const qtyInput = document.getElementById("rentQty");
-  const qty = parseInt(qtyInput.value);
-  if (qty > availableQty) {
-    qtyInput.value = availableQty;
+  const s = item.spesifikasi || {};
+  for(const k in s){
+    const dt = document.createElement('dt'); dt.textContent = k;
+    const dd = document.createElement('dd'); dd.textContent = s[k];
+    dl.appendChild(dt); dl.appendChild(dd);
   }
-  if (qty < 1) {
-    qtyInput.value = 1;
-  }
+
+  // availability
+  const avail = computeAvailability(name);
+  availEl.textContent = `Tersedia hari ini: ${avail}`;
+  availEl.style.display = 'block';
+  document.getElementById('addCartBtn').disabled = avail <= 0;
 }
 
-function confirmRent() {
-  const qty = parseInt(document.getElementById("rentQty").value);
-  const startDate = new Date(document.getElementById("rentStart").value);
-  const endDate = new Date(document.getElementById("rentEnd").value);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const maxDate = new Date(today);
-  maxDate.setMonth(maxDate.getMonth() + 1);
-  if (isNaN(qty) || qty <= 0) return alert("Jumlah harus valid!");
-  if (!startDate || !endDate || startDate >= endDate || startDate < today || endDate > maxDate) return alert("Tanggal harus dalam 1 bulan ke depan dan valid!");
-  // Check available for all dates
-  const inv = getInventory();
-  const bookings = getBookings();
-  const stock = inv[selectedItem.name] !== undefined ? inv[selectedItem.name] : defaultStock;
-  const range = getDateRange(startDate, endDate);
-  let minAvail = stock;
-  range.forEach(date => {
-    const b = (bookings[selectedItem.name] && bookings[selectedItem.name][date]) || 0;
-    if (stock - b < minAvail) minAvail = stock - b;
-  });
-  availableQty = minAvail;
-  if (qty > availableQty) return alert("Stok tidak cukup untuk tanggal tersebut!");
-  const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-  const total = selectedItem.price * qty * days;
-  const cartItem = {
-    name: selectedItem.name,
-    price: selectedItem.price,
-    qty: qty,
-    days: days,
-    total: total,
-    start: startDate.toISOString().split('T')[0],
-    end: endDate.toISOString().split('T')[0]
-  };
-  // Update bookings
-  if (!bookings[selectedItem.name]) bookings[selectedItem.name] = {};
-  range.forEach(date => {
-    bookings[selectedItem.name][date] = (bookings[selectedItem.name][date] || 0) + qty;
-  });
-  setBookings(bookings);
-  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+// simple add to cart (minimal item, qty 1, days 1)
+function addToCartDetail(){
+  const name = document.getElementById('itemName').textContent;
+  if(!name || name === 'Memuat...' || name === 'Barang tidak ditemukan') return;
+  const avail = computeAvailability(name);
+  if(avail <= 0) return alert('Stok tidak tersedia hari ini.');
+  const item = specs[name];
+  const cartItem = { name: name, price: item ? item.price : 0, qty: 1, days: 1, total: (item ? item.price : 0) };
+  const cart = JSON.parse(localStorage.getItem('cart')||'[]');
   cart.push(cartItem);
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
-  closeModal();
-  alert(`${selectedItem.name} (${qty}x, ${days} hari) ditambahkan ke keranjang ✅`);
+  alert(`${name} ditambahkan ke keranjang ✅`);
 }
 
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  document.getElementById("cartCount").textContent = cart.length;
-}
+function updateCartCount(){ const cart = JSON.parse(localStorage.getItem('cart')||'[]'); const el = document.getElementById('cartCount'); if(el) el.textContent = cart.length; }
 
-// === Init ===
-// Set min/max for rentStart and rentEnd to only allow 1 month from today
-function setDateLimits() {
-  const today = new Date();
-  const minDate = today.toISOString().split('T')[0];
-  const maxDateObj = new Date(today);
-  maxDateObj.setMonth(maxDateObj.getMonth() + 1);
-  const maxDate = maxDateObj.toISOString().split('T')[0];
-  document.getElementById('rentStart').setAttribute('min', minDate);
-  document.getElementById('rentStart').setAttribute('max', maxDate);
-  document.getElementById('rentEnd').setAttribute('min', minDate);
-  document.getElementById('rentEnd').setAttribute('max', maxDate);
-}
-document.addEventListener('DOMContentLoaded', setDateLimits);
-
-// === Check available qty for selected date range in modal ===
-function checkAvailableQty() {
-  const start = document.getElementById("rentStart").value;
-  const end = document.getElementById("rentEnd").value;
-  if (!selectedItem || !start || !end) {
-    document.getElementById("rentAvailable").textContent = "";
-    return;
-  }
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const maxDate = new Date(today);
-  maxDate.setMonth(maxDate.getMonth() + 1);
-  if (startDate < today || endDate > maxDate || startDate >= endDate) {
-    document.getElementById("rentAvailable").textContent = "Tanggal harus dalam 1 bulan ke depan dan valid.";
-    return;
-  }
-  const inv = getInventory();
-  const bookings = getBookings();
-  const stock = inv[selectedItem.name] !== undefined ? inv[selectedItem.name] : defaultStock;
-  const range = getDateRange(startDate, endDate);
-  let minAvail = stock;
-  range.forEach(date => {
-    const b = (bookings[selectedItem.name] && bookings[selectedItem.name][date]) || 0;
-    if (stock - b < minAvail) minAvail = stock - b;
-  });
-  availableQty = minAvail;
-  document.getElementById("rentAvailable").textContent = `Tersedia: ${minAvail} unit pada tanggal dipilih`;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  const rentStart = document.getElementById("rentStart");
-  const rentEnd = document.getElementById("rentEnd");
-  if (rentStart && rentEnd) {
-    rentStart.addEventListener("change", checkAvailableQty);
-    rentEnd.addEventListener("change", checkAvailableQty);
-  }
+document.addEventListener('DOMContentLoaded', ()=>{
+  const raw = (new URLSearchParams(window.location.search)).get('item') || (new URLSearchParams(window.location.search)).get('name') || '';
+  const name = raw ? decodeURIComponent(raw) : '';
+  showItem(name);
+  document.getElementById('addCartBtn').addEventListener('click', addToCartDetail);
+  updateCartCount();
 });
-
-window.onload = () => {
-  showDetail();
-  updateCartCount();
-};
 </script>
 
 </body>
